@@ -1,4 +1,4 @@
-My own version "from scratch" of a rescaled CFG. It isn't much but it's honest work.
+My own version "from scratch" of a self-rescaling CFG. It isn't much but it's honest work.
 
 While this node is connected, this will turn your sampler's CFG scale into something else.
 This methods works by rescaling the CFG at each step by evaluating the potential average min/max values. Aiming at a desired output intensity.
