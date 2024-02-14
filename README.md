@@ -36,6 +36,8 @@ TLDR: set your CFG at 8 to try it. No burned images and artifacts anymore. CFG i
 Low scale like 4 also gives really nice results since your CFG is not the CFG anymore.
 
 
+Also in general even with relatively low settings it seems to improve the quality.
+
+Here, 14 steps/dpmpp2/karras/pseudo CFG at 6.5 on a normal SDXL model:
 ![dpmpp_2m_karras_14steps_cfg6 5_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/4a7f47cf-f1c1-433a-8fa5-2c61c4c6f9c0)
 
-14 steps/dpmpp2/karras/pseudo CFG at 6.5 on a normal SDXL model
