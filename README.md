@@ -1,5 +1,12 @@
 My own version "from scratch" of a self-rescaling CFG. It isn't much but it's honest work.
 
+#Usage:
+
+![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/7dadbec5-f7bf-4439-883e-bdd265c889e0)
+
+That's it!
+
+
 While this node is connected, this will turn your sampler's CFG scale into something else.
 This methods works by rescaling the CFG at each step by evaluating the potential average min/max values. Aiming at a desired output intensity.
 The base intensity has been arbitrarily chosen by me and your sampler's CFG scale will make this target vary.
