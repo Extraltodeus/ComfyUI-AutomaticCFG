@@ -11,7 +11,9 @@ This one allows to have a different target for each channels:
 ![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/9017c298-d06e-4785-a077-f2b5cd0937bc)
 
 Channel 1 controls the brightness
+
 Channel 2 and 3 controls the colors/saturation
+
 Channel 4 controls the details/sharpness
 
 
