@@ -16,3 +16,5 @@ I attribute this more random yet positive behavior to the fact that it seems to 
 It is dead simple to use and made sampling more fun from my perspective :)
 
 You will find it in the model_patches category.
+
+TLDR: set your CFG at 8 to try it. No burned images and artifacts anymore. CFG is also a bit more sensitive because it's a proportion around 8.
