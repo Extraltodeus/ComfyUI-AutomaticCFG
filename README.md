@@ -1,4 +1,4 @@
-My own version "from scratch" of a self-rescaling CFG. It isn't much but it's honest work.
+My own version "from scratch" of a self-rescaling CFG. It ain't much but it's honest work.
 
 # Usage:
 
