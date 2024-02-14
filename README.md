@@ -2,7 +2,7 @@ My own version "from scratch" of a rescaled CFG. It isn't much but it's honest w
 
 While this node is connected, this will turn your sampler's CFG scale into something else.
 This methods works by rescaling the CFG at each step by evaluating the potential average min/max values. Aiming at a desired output intensity.
-The base intensity has been arbitrarily chosen by me and your CFG scale will make this target vary.
+The base intensity has been arbitrarily chosen by me and your sampler's CFG scale will make this target vary.
 I have set the "central" CFG at 8. Meaning that at 4 you will aim at half of the desired range while at 16 it will be doubled. This makes it feel slightly like the usual.
 
 The CFG behavior during the sampling being automatically set for each channel makes it behave differently and therefores gives different outputs than the usual.
