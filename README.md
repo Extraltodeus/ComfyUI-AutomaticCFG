@@ -10,6 +10,8 @@ That's it!
 
 Your CFG won't be your CFG anymore. It is turned into a way to guide the CFG. So don't hesitate to change your habits while trying!
 
+# The rest of the explaination:
+
 While this node is connected, this will turn your sampler's CFG scale into something else.
 This methods works by rescaling the CFG at each step by evaluating the potential average min/max values. Aiming at a desired output intensity.
 The base intensity has been arbitrarily chosen by me and your sampler's CFG scale will make this target vary.
