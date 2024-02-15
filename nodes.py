@@ -12,7 +12,7 @@ class simpleDynamicCFG:
     CATEGORY = "model_patches"
 
     def patch(self, model):
-        base_target = 24.7/7.677542686462402
+        base_target = 0.41903709829879954/model.model.latent_format.scale_factor
         top_k = 0.25
         def linear_cfg(args):
             cond = args["cond"]
@@ -51,7 +51,7 @@ class simpleDynamicCFGperChannelMultiplier:
     CATEGORY = "model_patches"
 
     def patch(self, model, dynamic_intensity_channel_1,dynamic_intensity_channel_2,dynamic_intensity_channel_3,dynamic_intensity_channel_4):
-        base_target = 24.7/7.677542686462402
+        base_target = 0.41903709829879954/model.model.latent_format.scale_factor
         top_k = 0.25
         dynamic_channels = [dynamic_intensity_channel_1,dynamic_intensity_channel_2,dynamic_intensity_channel_3,dynamic_intensity_channel_4]
         def linear_cfg(args):
