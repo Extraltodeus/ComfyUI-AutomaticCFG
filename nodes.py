@@ -12,15 +12,15 @@ class simpleDynamicCFG:
     CATEGORY = "model_patches"
 
     def patch(self, model):
-        base_target = 0.41903709829879954/model.model.latent_format.scale_factor
         top_k = 0.25
+        reference_cfg = 8
         def linear_cfg(args):
             cond = args["cond"]
             cond_scale = args["cond_scale"]
-            intensity_target = cond_scale/8
             uncond = args["uncond"]
             input_x = args["input"]
-            denoised_tmp = input_x-(uncond + 8*(cond - uncond))
+            target_intensity = 0.8/reference_cfg*cond_scale
+            denoised_tmp = input_x-(uncond + reference_cfg*(cond - uncond))
             for b in range(len(denoised_tmp)):
                 for c in range(len(denoised_tmp[b])):
                     channel = denoised_tmp[b][c]
@@ -29,7 +29,7 @@ class simpleDynamicCFG:
                     max_val = torch.mean(max_values).item()
                     min_val = torch.mean(min_values).item()
                     denoised_range = (max_val+abs(min_val))/2
-                    tmp_scale = 2*base_target*intensity_target/denoised_range
+                    tmp_scale = reference_cfg*target_intensity/denoised_range
                     denoised_tmp[b][c] = uncond[b][c] + tmp_scale * (cond[b][c] - uncond[b][c])
             return denoised_tmp
         m = model.clone()
