@@ -12,7 +12,7 @@ That's it!
 
 # Just a note:
 
-Your CFG won't be your CFG anymore. It is turned into a way to guide the CFG. So don't hesitate to change your habits while trying!
+Your CFG won't be your CFG anymore. It is turned into a way to guide the CFG/final intensity/brightness/saturation. So don't hesitate to change your habits while trying!
 
 # The rest of the explaination:
 
