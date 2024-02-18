@@ -17,9 +17,9 @@ Your CFG won't be your CFG anymore. It is turned into a way to guide the CFG/fin
 # The rest of the explaination:
 
 While this node is connected, this will turn your sampler's CFG scale into something else.
-This methods works by rescaling the CFG at each step by evaluating the potential average min/max values. Aiming at a desired output intensity.
+This methods works by rescaling the CFG at each step by evaluating the potential average min/max values. Aiming at a desired output intensity (by intensity I mean overall brightness/saturation/sharpness).
 The base intensity has been arbitrarily chosen by me and your sampler's CFG scale will make this target vary.
-I have set the "central" CFG at 8. Meaning that at 4 you will aim at half of the desired range while at 16 it will be doubled. This makes it feel slightly like the usual.
+I have set the "central" CFG at 8. Meaning that at 4 you will aim at half of the desired range while at 16 it will be doubled. This makes it feel slightly like the usual when you're around the normal values.
 
 The CFG behavior during the sampling being automatically set for each channel makes it behave differently and therefores gives different outputs than the usual.
 From my observations by printing the results while testing, it seems to be going from around 16 at the beginning, to something like 4 near the middle and ends up near ~7. 
