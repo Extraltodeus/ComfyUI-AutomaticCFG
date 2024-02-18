@@ -1,5 +1,9 @@
 My own version "from scratch" of a self-rescaling CFG. It ain't much but it's honest work.
 
+# In short:
+
+Quality > prompt following (but somehow it also feels like it follows the prompt more so... I'll let you decide)
+
 # Usage:
 
 ![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/7dadbec5-f7bf-4439-883e-bdd265c889e0)
