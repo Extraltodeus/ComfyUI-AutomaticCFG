@@ -35,4 +35,4 @@ class simpleDynamicCFG:
         m = model.clone()
         m.set_model_sampler_cfg_function(linear_cfg, disable_cfg1_optimization=True)
         return (m, )
-
+#It would have made more sense to make the min_val absolute before the mean but I've tried that way and since it's an arbitrary goal I'll leave it like that.
