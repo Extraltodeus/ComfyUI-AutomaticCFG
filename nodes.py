@@ -36,3 +36,4 @@ class simpleDynamicCFG:
         m.set_model_sampler_cfg_function(linear_cfg, disable_cfg1_optimization=True)
         return (m, )
 #It would have made more sense to make the min_val absolute before the mean but I've tried that way and since it's an arbitrary goal I'll leave it like that.
+#Edit 2 to explain further: fixing this makes the limit too hard and starts to visibly limit the denoising. Leaving it likes this allows a margin of manoeuver.
