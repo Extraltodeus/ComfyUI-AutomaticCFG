@@ -158,5 +158,5 @@ class simpleDynamicCFG:
 
     def patch(self, model, boost, color_balance=False):
         advcfg = advancedDynamicCFG()
-        m = advcfg.patch(model,color_balance,color_balance,"hard" if boost else "soft", boost, 6.86)[0]
+        m = advcfg.patch(model,color_balance,color_balance,"soft", boost, 6.86)[0]
         return (m, )
