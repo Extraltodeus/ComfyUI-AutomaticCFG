@@ -6,12 +6,12 @@ Quality > prompt following (but somehow it also feels like it follows the prompt
 
 # Usage:
 
-![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/99630353-0e85-4bd8-80aa-36698b354965)
+![77889aa6-a2f6-48bf-8cde-17c9cbfda5fa](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/c725a06c-8966-43de-ab1c-569e2ff5b151)
+
 
 ### That's it!
 
 - The "boost" toggle will turn off the guidance when the sigmas are near 1.
-- The "color balance" toggle will balance the colors and contrasts in between the steps.
 - I leave the advanced node for those who are interested. It will not be beneficial to those who do not feel like experimenting.
 
 For 100 steps this is where the sigma are reaching 1:
