@@ -13,6 +13,10 @@ That's it!
 - The "boost" toggle will turn off the guidance when the sigmas are near 1.
 - I leave the advanced node for those who are interested. It will not be beneficial to those who do not feel like experimenting.
 
+For 100 steps this is where the sigma are reaching 1:
+
+![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/525199f1-2857-4027-a96e-105bc4b01860)
+
 # Just a note:
 
 Your CFG won't be your CFG anymore. It is turned into a way to guide the CFG/final intensity/brightness/saturation. So don't hesitate to change your habits while trying!
