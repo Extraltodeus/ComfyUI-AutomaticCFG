@@ -8,7 +8,7 @@ Quality > prompt following (but somehow it also feels like it follows the prompt
 
 ![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/77889aa6-a2f6-48bf-8cde-17c9cbfda5fa)
 
-That's it!
+### That's it!
 
 - The "boost" toggle will turn off the guidance when the sigmas are near 1.
 - I leave the advanced node for those who are interested. It will not be beneficial to those who do not feel like experimenting.
