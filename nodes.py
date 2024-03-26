@@ -149,13 +149,14 @@ class simpleDynamicCFG:
         return {"required": {
                                 "model": ("MODEL",),
                                 "boost" : ("BOOLEAN", {"default": True}),
+                                "color_balance" : ("BOOLEAN", {"default": True}),
                               }}
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
 
     CATEGORY = "model_patches"
 
-    def patch(self, model, boost):
+    def patch(self, model, boost, color_balance):
         advcfg = advancedDynamicCFG()
-        m = advcfg.patch(model,False,False,"hard" if boost else "soft", boost, 6.86)[0]
+        m = advcfg.patch(model,color_balance,color_balance,"hard" if boost else "soft", boost, 6.86)[0]
         return (m, )
