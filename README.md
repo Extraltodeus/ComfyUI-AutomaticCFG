@@ -11,7 +11,7 @@ Quality > prompt following (but somehow it also feels like it follows the prompt
 
 ### That's it!
 
-- The "boost" toggle will turn off the guidance when the sigmas are near 1.
+- The "boost" toggle will turn off the guidance when the sigmas are near 1. This doubles the inference speed.
 - I leave the advanced node for those who are interested. It will not be beneficial to those who do not feel like experimenting.
 
 For 100 steps this is where the sigma are reaching 1:
