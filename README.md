@@ -20,6 +20,10 @@ For 100 steps this is where the sigma are reaching 1:
 
 There seem to be a slight improvement in quality when using the boost with my other node [CLIP Vector Sculptor text encode](https://github.com/Extraltodeus/Vector_Sculptor_ComfyUI) using the "mean" normalization option.
 
+# The boost does not hurt the sharpness
+
+![sharp_as_fuck](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/c9661bda-7cbe-45df-9c89-ac39d5dcd950)
+
 # Just a note:
 
 Your CFG won't be your CFG anymore. It is turned into a way to guide the CFG/final intensity/brightness/saturation. So don't hesitate to change your habits while trying!
