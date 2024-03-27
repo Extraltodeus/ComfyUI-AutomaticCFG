@@ -97,10 +97,10 @@ class advancedDynamicCFG:
                 
             target_intensity = self.last_cfg_ht_one / 10
 
-            # if sigma_boost and cond_scale > 1:
-            #     for b in range(len(cond)):
-            #         for c in range(len(cond[b])):
-            #             uncond[b][c] = uncond[b][c] * torch.norm(cond[b][c]) / torch.norm(uncond[b][c])
+            if sigma_boost and cond_scale > 1:
+                for b in range(len(cond)):
+                    for c in range(len(cond[b])):
+                        uncond[b][c] = uncond[b][c] * torch.norm(cond[b][c]) / torch.norm(uncond[b][c])
             
             if automatic_cfg == "None" or (cond_scale == 1 and automatic_cfg != "include_boost"):
                 return uncond + cond_scale * (cond - uncond)
