@@ -91,17 +91,6 @@ class advancedDynamicCFG:
             uncond = input_x - uncond_pred
             sigma = args["sigma"][0]
 
-            if debug_print:
-                if cond_scale > 1:
-                    if automatic_cfg == "None":
-                        fake_scale = cond_scale
-                    else:
-                        fake_scale = reference_cfg
-                    denoised_norm = (input_x - (uncond + fake_scale * (cond - uncond))).norm().item()
-                else:
-                    denoised_norm = (input_x - cond).norm().item()
-                print(f" {denoised_norm} / {input_x.norm().item()/denoised_norm}")
-
             if sigma == sigmax or cond_scale > 1:
                 self.last_cfg_ht_one = cond_scale
                 
