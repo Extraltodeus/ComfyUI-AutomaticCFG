@@ -31,11 +31,7 @@ For 100 steps this is where the sigma are reaching 1:
 
 There seem to be a slight improvement in quality when using the boost with my other node [CLIP Vector Sculptor text encode](https://github.com/Extraltodeus/Vector_Sculptor_ComfyUI) using the "mean" normalization option.
 
-# The boost does not hurt the sharpness
-
-![sharp_as_fuck](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/c9661bda-7cbe-45df-9c89-ac39d5dcd950)
-
-# Negative prompt x10 works like a charm
+# Negative prompt x10 works like a charm (+ speed boost)
 
 ![02062UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/7760da8d-9916-44ed-9c1f-e5ee1c05e077)
 
