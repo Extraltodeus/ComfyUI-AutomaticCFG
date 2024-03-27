@@ -35,6 +35,10 @@ There seem to be a slight improvement in quality when using the boost with my ot
 
 ![sharp_as_fuck](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/c9661bda-7cbe-45df-9c89-ac39d5dcd950)
 
+# Negative prompt x10 works like a charm
+
+![02062UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/7760da8d-9916-44ed-9c1f-e5ee1c05e077)
+
 # Just a note:
 
 Your CFG won't be your CFG anymore. It is turned into a way to guide the CFG/final intensity/brightness/saturation. So don't hesitate to change your habits while trying!
