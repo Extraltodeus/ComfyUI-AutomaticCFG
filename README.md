@@ -1,5 +1,9 @@
 My own version "from scratch" of a self-rescaling CFG. It ain't much but it's honest work.
 
+Updated:
+- Speed increase
+- Negative weighting
+
 # In short:
 
 Quality > prompt following (but somehow it also feels like it follows the prompt more so... I'll let you decide)
