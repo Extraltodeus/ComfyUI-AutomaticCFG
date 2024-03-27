@@ -7,7 +7,7 @@ original_sampling_function = deepcopy(comfy.samplers.sampling_function)
 minimum_sigma_to_disable_uncond = 1
 
 def sampling_function_patched(model, x, timestep, uncond, cond, cond_scale, model_options={}, seed=None):
-        if math.isclose(cond_scale, 1.0) and model_options.get("disable_cfg1_optimization", False) == False or timestep <= minimum_sigma_to_disable_uncond:
+        if math.isclose(cond_scale, 1.0) and model_options.get("disable_cfg1_optimization", False) == False or timestep[0] <= minimum_sigma_to_disable_uncond:
             uncond_ = None
             cond_scale = 1
         else:
