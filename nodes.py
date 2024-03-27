@@ -53,6 +53,9 @@ class advancedDynamicCFG:
                                 "automatic_cfg" : (["None","soft","hard","include_boost"], {"default": "hard"},),
                                 "sigma_boost" : ("BOOLEAN", {"default": True}),
                                 "sigma_boost_percentage": ("FLOAT", {"default": 6.86, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
+                                "lerp_uncond" : ("BOOLEAN", {"default": False}),
+                                "lerp_uncond_strength": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 10.0, "step": 0.1, "round": 0.1}),
+                                # "debug_print" : ("BOOLEAN", {"default": False}),
                               }}
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
@@ -60,7 +63,7 @@ class advancedDynamicCFG:
     CATEGORY = "model_patches"
 
     def patch(self, model, center_mean_post_cfg, center_mean_to_sigma,
-              automatic_cfg, sigma_boost, sigma_boost_percentage):
+              automatic_cfg, sigma_boost, sigma_boost_percentage, lerp_uncond=False, lerp_uncond_strength=1, debug_print=False):
         
         global minimum_sigma_to_disable_uncond
         model_sampling = model.model.model_sampling
@@ -78,11 +81,26 @@ class advancedDynamicCFG:
         top_k = 0.25
         reference_cfg = 8
         def linear_cfg(args):
-            cond = args["cond"]
             cond_scale = args["cond_scale"]
-            uncond = args["uncond"]
             input_x = args["input"]
+            cond_pred = args["cond_denoised"]
+            uncond_pred = args["uncond_denoised"]
+            if lerp_uncond:
+                uncond_pred = torch.lerp(cond_pred,uncond_pred,lerp_uncond_strength)
+            cond = input_x - cond_pred
+            uncond = input_x - uncond_pred
             sigma = args["sigma"][0]
+
+            if debug_print:
+                if cond_scale > 1:
+                    if automatic_cfg == "None":
+                        fake_scale = cond_scale
+                    else:
+                        fake_scale = reference_cfg
+                    denoised_norm = (input_x - (uncond + fake_scale * (cond - uncond))).norm().item()
+                else:
+                    denoised_norm = (input_x - cond).norm().item()
+                print(f" {denoised_norm} / {input_x.norm().item()/denoised_norm}")
 
             if sigma == sigmax or cond_scale > 1:
                 self.last_cfg_ht_one = cond_scale
@@ -100,7 +118,7 @@ class advancedDynamicCFG:
             if cond_scale > 1:
                 denoised_tmp = input_x - (uncond + reference_cfg * (cond - uncond))
             else:
-                denoised_tmp = input_x - cond
+                denoised_tmp = input_x + cond_pred
 
             for b in range(len(denoised_tmp)):
                 for c in range(len(denoised_tmp[b])):
@@ -115,8 +133,11 @@ class advancedDynamicCFG:
                         min_val = torch.mean(torch.abs(min_values)).item()
 
                     denoised_range   = (max_val + min_val) / 2
-                    scale_correction = target_intensity  / denoised_range
+                    scale_correction = target_intensity    / denoised_range
                     tmp_scale = reference_cfg * scale_correction
+                    
+                    if debug_print:
+                        print(f"c{c}: {tmp_scale} / {scale_correction}")
 
                     if cond_scale > 1:
                         denoised_tmp[b][c] = uncond[b][c] + tmp_scale * (cond[b][c] - uncond[b][c])
@@ -149,7 +170,6 @@ class simpleDynamicCFG:
         return {"required": {
                                 "model": ("MODEL",),
                                 "boost" : ("BOOLEAN", {"default": True}),
-                                # "color_balance" : ("BOOLEAN", {"default": True}),
                               }}
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
@@ -159,4 +179,22 @@ class simpleDynamicCFG:
     def patch(self, model, boost, color_balance=False):
         advcfg = advancedDynamicCFG()
         m = advcfg.patch(model,color_balance,color_balance,"hard" if boost else "soft", boost, 6.86)[0]
+        return (m, )
+
+class simpleDynamicCFGlerpUncond:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {
+                                "model": ("MODEL",),
+                                "boost" : ("BOOLEAN", {"default": True}),
+                                "negative_strength": ("FLOAT", {"default": 1, "min": 0.0, "max": 10.0, "step": 0.1, "round": 0.1}),
+                              }}
+    RETURN_TYPES = ("MODEL",)
+    FUNCTION = "patch"
+
+    CATEGORY = "model_patches"
+
+    def patch(self, model, boost, negative_strength):
+        advcfg = advancedDynamicCFG()
+        m = advcfg.patch(model, False, False, "hard", boost, 6.86, negative_strength != 1, negative_strength / 2)[0]
         return (m, )
