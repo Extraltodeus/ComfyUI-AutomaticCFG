@@ -87,6 +87,7 @@ class advancedDynamicCFG:
             uncond_pred = args["uncond_denoised"]
             if lerp_uncond:
                 uncond_pred = torch.lerp(cond_pred,uncond_pred,lerp_uncond_strength)
+                uncond_pred = uncond_pred * cond_pred.norm() / uncond_pred.norm()
             cond = input_x - cond_pred
             uncond = input_x - uncond_pred
             sigma = args["sigma"][0]
