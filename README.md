@@ -6,12 +6,19 @@ Quality > prompt following (but somehow it also feels like it follows the prompt
 
 # Usage:
 
+Normal node:
+
 ![77889aa6-a2f6-48bf-8cde-17c9cbfda5fa](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/c725a06c-8966-43de-ab1c-569e2ff5b151)
+
+Negative strength version:
+
+![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/e8099078-2f3e-4067-827d-57a95989e2d3)
 
 
 ### That's it!
 
 - The "boost" toggle will turn off the guidance when the sigmas are near 1. This doubles the inference speed.
+- The negative strength lerp the cond and uncond. Now in normal times this would burn things to the ground but here it works since it's initialy an anti-burn. This idea is inspired by the [negative prompt weight](https://github.com/muerrilla/stable-diffusion-NPW) repository.
 - I leave the advanced node for those who are interested. It will not be beneficial to those who do not feel like experimenting.
 
 For 100 steps this is where the sigma are reaching 1:
