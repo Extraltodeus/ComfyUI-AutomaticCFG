@@ -21,7 +21,7 @@ Negative strength version:
 
 ### That's it!
 
-- The "boost" toggle will turn off the guidance when the sigmas are near 1. This doubles the inference speed. **To unpatch the function you have to start a batch with the toggle off.** Removing/disconnecting the node will not do it.
+- The "boost" toggle will turn off the negative guidance when the sigmas are near 1. This doubles the inference speed. **To unpatch the function you have to start a batch with the toggle off.** Removing/disconnecting the node will not do it.
 - The negative strength lerp the cond and uncond. Now in normal times the way I do this would burn things to the ground. But since it is initialy an anti-burn it just works. This idea is inspired by the [negative prompt weight](https://github.com/muerrilla/stable-diffusion-NPW) repository.
 - I leave the advanced node for those who are interested. It will not be beneficial to those who do not feel like experimenting.
 
