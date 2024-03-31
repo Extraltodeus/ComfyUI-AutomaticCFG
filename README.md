@@ -1,7 +1,7 @@
 My own version "from scratch" of a self-rescaling CFG. It ain't much but it's honest work.
 
 Updated:
-- Up to 28.5% faster inference speed than normal
+- Up to 28.5% faster generation speed than normal
 - Negative weighting
 
 # In short:
