@@ -4,6 +4,10 @@ Updated:
 - Up to 28.5% faster generation speed than normal
 - Negative weighting
 
+05.04.24:
+
+- Updated to latest ComfyUI version. If you get an error: update your ComfyUI
+  
 # In short:
 
 Quality > prompt following (but somehow it also feels like it follows the prompt more so... I'll let you decide)
