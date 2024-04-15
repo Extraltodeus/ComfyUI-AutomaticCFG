@@ -7,6 +7,13 @@ Updated:
 05.04.24:
 
 - Updated to latest ComfyUI version. If you get an error: update your ComfyUI
+
+15.04.24
+
+- Added "no uncond" node which completely disable the negative and doubles the speed while rescaling the latent space in the post-cfg function up until the sigmas are at 1. By itself it is not perfect and I'm searching for solutions to improve the final result. It seems to work better with dpmpp3m_sde/exponential if you're not using anything else. If you are using the PAG node then you don't need to care about the sampler but will generate at a normal speed. Result will be simply different (I personally like them).
+- To use the [PAG node](https://github.com/pamparamm/sd-perturbed-attention/tree/master) without slow-down (if using the no-uncond node) or at least take advantage of the boost feature:
+  - in the "pag_nodes.py" file look for "disable_cfg1_optimization=True"
+  - set it to "disable_cfg1_optimization=False".
   
 # In short:
 
