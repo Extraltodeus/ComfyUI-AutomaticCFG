@@ -14,6 +14,7 @@ Updated:
 - To use the [PAG node](https://github.com/pamparamm/sd-perturbed-attention/tree/master) without slow-down (if using the no-uncond node) or at least take advantage of the boost feature:
   - in the "pag_nodes.py" file look for "disable_cfg1_optimization=True"
   - set it to "disable_cfg1_optimization=False".
+- For the negative lerp function in the other nodes the scale has been divided by two. So if you were using it at 10, set it to 5.
   
 # In short:
 
