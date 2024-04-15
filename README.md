@@ -15,7 +15,13 @@ Updated:
   ~~- in the "pag_nodes.py" file look for "disable_cfg1_optimization=True"~~
   ~~- set it to "disable_cfg1_optimization=False".~~ This is not necessary anymore because the dev modified it already :)
 - For the negative lerp function in the other nodes the scale has been divided by two. So if you were using it at 10, set it to 5.
-  
+
+16.04.24
+
+- Added "uncond_start_percentage" as an experimental feature. This allows to start the guidance later as a way to try [Applying Guidance in a Limited Interval Improves
+Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.07724.pdf). 50% of the steps would be 10% of the sigmas with the Karras scheduler. Set "uncond_start_percentage" to 10% if you want to try it.
+
+
 # In short:
 
 Quality > prompt following (but somehow it also feels like it follows the prompt more so... I'll let you decide)
