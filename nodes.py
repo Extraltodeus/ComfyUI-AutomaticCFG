@@ -5,10 +5,11 @@ import math
 
 original_sampling_function = deepcopy(comfy.samplers.sampling_function)
 minimum_sigma_to_disable_uncond = 1
+maximum_sigma_to_enable_uncond  = 1000000
 no_uncond_at_all = False
 
 def sampling_function_patched(model, x, timestep, uncond, cond, cond_scale, model_options={}, seed=None):
-        if math.isclose(cond_scale, 1.0) and model_options.get("disable_cfg1_optimization", False) == False or timestep[0] <= minimum_sigma_to_disable_uncond or no_uncond_at_all:
+        if math.isclose(cond_scale, 1.0) and model_options.get("disable_cfg1_optimization", False) == False or timestep[0] <= minimum_sigma_to_disable_uncond or no_uncond_at_all or timestep[0] > maximum_sigma_to_enable_uncond:
             uncond_ = None
             if not no_uncond_at_all:
                 cond_scale = 1
@@ -65,6 +66,7 @@ class advancedDynamicCFG:
                                 "post_cfg_scale" : ("BOOLEAN", {"default": False}),
                                 "post_cfg_scale_value": ("FLOAT", {"default": 0, "min": 0.0, "max": 100.0, "step": 0.1, "round": 0.1}),
                                 "no_uncond_mode" : ("BOOLEAN", {"default": False}),
+                                "uncond_start_percentage": ("FLOAT", {"default": 100.0, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
                                 "debug_print" : ("BOOLEAN", {"default": False}),
                               }}
     RETURN_TYPES = ("MODEL",)
@@ -74,16 +76,18 @@ class advancedDynamicCFG:
 
     def patch(self, model, center_mean_post_cfg, center_mean_to_sigma,
               automatic_cfg, sigma_boost, sigma_boost_percentage, lerp_uncond=False, lerp_uncond_strength=1,
-              post_cfg_scale=False, post_cfg_scale_value=8, no_uncond_mode=False, debug_print=False):
+              post_cfg_scale=False, post_cfg_scale_value=8, no_uncond_mode=False, uncond_start_percentage=100, debug_print=False):
         
-        global minimum_sigma_to_disable_uncond, no_uncond_at_all
+        global minimum_sigma_to_disable_uncond, maximum_sigma_to_enable_uncond, no_uncond_at_all
         no_uncond_at_all = no_uncond_mode
         model_sampling = model.model.model_sampling
         sigmin = model_sampling.sigma(model_sampling.timestep(model_sampling.sigma_min))
         sigmax = model_sampling.sigma(model_sampling.timestep(model_sampling.sigma_max))
-        low_sigma_threshold = (sigmax - sigmin) / 100 * sigma_boost_percentage
+        high_sigma_threshold = (sigmax - sigmin) / 100 * uncond_start_percentage
+        low_sigma_threshold  = (sigmax - sigmin) / 100 * sigma_boost_percentage
         if sigma_boost_percentage > 0 and sigma_boost:
             minimum_sigma_to_disable_uncond  = low_sigma_threshold
+            maximum_sigma_to_enable_uncond   = high_sigma_threshold
             comfy.samplers.sampling_function = sampling_function_patched
             print(f"Sampling function patched. Trigger when sigmas are at: {round(minimum_sigma_to_disable_uncond.item(),4)}")
         else:
