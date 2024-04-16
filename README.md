@@ -19,7 +19,7 @@ Updated:
 16.04.24
 
 - Added "uncond_start_percentage" as an experimental feature. This allows to start the guidance later as a way to try [Applying Guidance in a Limited Interval Improves
-Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.07724.pdf). 50% of the steps would be 10% of the sigmas with the Karras scheduler. Set "uncond_start_percentage" to 10% if you want to try it. A more accurate implementation [can be found here](https://github.com/ericbeyer/guidance_interval) :)
+Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.07724.pdf). A more accurate implementation [can be found here](https://github.com/ericbeyer/guidance_interval) :)
 
 
 # In short:
