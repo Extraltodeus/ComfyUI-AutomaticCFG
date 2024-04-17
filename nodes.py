@@ -88,13 +88,13 @@ class advancedDynamicCFG:
                                 "uncond_sigma_end":   ("FLOAT", {"default": 6.86, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
 
                                 "lerp_uncond" : ("BOOLEAN", {"default": False}),
-                                "lerp_uncond_strength":    ("FLOAT", {"default": 1, "min": 0.0, "max": 10.0, "step": 0.1, "round": 0.1}),
+                                "lerp_uncond_strength":    ("FLOAT", {"default": 2, "min": 0.0, "max": 10.0, "step": 0.1, "round": 0.1}),
                                 "lerp_uncond_sigma_start": ("FLOAT", {"default": 100,  "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
                                 "lerp_uncond_sigma_end":   ("FLOAT", {"default": 6.86, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
 
                                 "subtract_latent_mean" : ("BOOLEAN", {"default": False}),
                                 "subtract_latent_mean_sigma_start": ("FLOAT", {"default": 100,  "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
-                                "subtract_latent_mean_sigma_end":   ("FLOAT", {"default": 99.0, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
+                                "subtract_latent_mean_sigma_end":   ("FLOAT", {"default": 50.0, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
 
                                 "latent_intensity_rescale"     : ("BOOLEAN", {"default": True}),
                                 "latent_intensity_rescale_method" : (["soft","hard","range"], {"default": "hard"},),
@@ -265,10 +265,10 @@ class postCFGrescaleOnly:
                                 "model": ("MODEL",),
                                 "subtract_latent_mean" : ("BOOLEAN", {"default": True}),
                                 "subtract_latent_mean_sigma_start": ("FLOAT", {"default": 100,  "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
-                                "subtract_latent_mean_sigma_end":   ("FLOAT", {"default": 99.0, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
+                                "subtract_latent_mean_sigma_end":   ("FLOAT", {"default": 50.0, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
                                 "latent_intensity_rescale"     : ("BOOLEAN", {"default": True}),
                                 "latent_intensity_rescale_method" : (["soft","hard","range"], {"default": "hard"},),
-                                "latent_intensity_rescale_cfg" : ("FLOAT", {"default": 8,  "min": 0.0, "max": 100.0, "step": 0.1, "round": 0.01}),
+                                "latent_intensity_rescale_cfg" : ("FLOAT", {"default": 7.6,  "min": 0.0, "max": 100.0, "step": 0.1, "round": 0.01}),
                                 "latent_intensity_rescale_sigma_start": ("FLOAT", {"default": 100,  "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
                                 "latent_intensity_rescale_sigma_end":   ("FLOAT", {"default": 50, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
                               }}
