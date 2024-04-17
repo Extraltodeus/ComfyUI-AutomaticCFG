@@ -1,33 +1,5 @@
 My own version "from scratch" of a self-rescaling CFG. It ain't much but it's honest work.
 
-Updated:
-- Up to 28.5% faster generation speed than normal
-- Negative weighting
-
-05.04.24:
-
-- Updated to latest ComfyUI version. If you get an error: update your ComfyUI
-
-15.04.24
-
-- Added "no uncond" node which completely disable the negative and doubles the speed while rescaling the latent space in the post-cfg function up until the sigmas are at 1 (or really, 6.86%). By itself it is not perfect and I'm searching for solutions to improve the final result. It seems to work better with dpmpp3m_sde/exponential if you're not using anything else. If you are using the PAG node then you don't need to care about the sampler but will generate at a normal speed. Result will be simply different (I personally like them).
-- To use the [PAG node](https://github.com/pamparamm/sd-perturbed-attention/tree/master) ~~without the complete slow-down (if using the no-uncond node) or at least take advantage of the boost feature:~~
-  ~~- in the "pag_nodes.py" file look for "disable_cfg1_optimization=True"~~
-  ~~- set it to "disable_cfg1_optimization=False".~~ This is not necessary anymore because the dev modified it already :)
-- For the negative lerp function in the other nodes the scale has been divided by two. So if you were using it at 10, set it to 5.
-
-16.04.24
-
-- Added "uncond_start_percentage" as an experimental feature. This allows to start the guidance later as a way to try [Applying Guidance in a Limited Interval Improves
-Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.07724.pdf). A more accurate implementation [can be found here](https://github.com/ericbeyer/guidance_interval) :)
-
-17.04.24
-
-- reworked the advanced node and cleaned up
-- added timing on every options
-- add a post-rescale node which allows to fight deep-frying images a bit more forr some special cases
-- added a tweaked version of the Comfy SAG node with start/end sliders
-
 # In short:
 
 Quality > prompt following (but somehow it also feels like it follows the prompt more so... I'll let you decide)
@@ -93,14 +65,34 @@ TLDR: set your CFG at 8 to try it. No burned images and artifacts anymore. CFG i
 
 Low scale like 4 also gives really nice results since your CFG is not the CFG anymore.
 
+# Updates:
 
-Also in general even with relatively low settings it seems to improve the quality.
+Updated:
+- Up to 28.5% faster generation speed than normal
+- Negative weighting
 
-It really helps to make the little detail fall into place:
+05.04.24:
 
-![newspaperofmadness](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/0b041042-dbb5-4ed7-a81f-add6e2093e02)
+- Updated to latest ComfyUI version. If you get an error: update your ComfyUI
 
+15.04.24
 
-Here too even with low settings, 14 steps/dpmpp2/karras/pseudo CFG at 6.5 on a normal SDXL model:
-![dpmpp_2m_karras_14steps_cfg6 5_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/4a7f47cf-f1c1-433a-8fa5-2c61c4c6f9c0)
+- Added "no uncond" node which completely disable the negative and doubles the speed while rescaling the latent space in the post-cfg function up until the sigmas are at 1 (or really, 6.86%). By itself it is not perfect and I'm searching for solutions to improve the final result. It seems to work better with dpmpp3m_sde/exponential if you're not using anything else. If you are using the PAG node then you don't need to care about the sampler but will generate at a normal speed. Result will be simply different (I personally like them).
+- To use the [PAG node](https://github.com/pamparamm/sd-perturbed-attention/tree/master) ~~without the complete slow-down (if using the no-uncond node) or at least take advantage of the boost feature:~~
+  ~~- in the "pag_nodes.py" file look for "disable_cfg1_optimization=True"~~
+  ~~- set it to "disable_cfg1_optimization=False".~~ This is not necessary anymore because the dev modified it already :)
+- For the negative lerp function in the other nodes the scale has been divided by two. So if you were using it at 10, set it to 5.
+
+16.04.24
+
+- Added "uncond_start_percentage" as an experimental feature. This allows to start the guidance later as a way to try [Applying Guidance in a Limited Interval Improves
+Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.07724.pdf). A more accurate implementation [can be found here](https://github.com/ericbeyer/guidance_interval) :)
+
+17.04.24
+
+- reworked the advanced node and cleaned up
+- added timing on every options
+- add a post-rescale node which allows to fight deep-frying images a bit more forr some special cases
+- added a tweaked version of the Comfy SAG node with start/end sliders
+
 
