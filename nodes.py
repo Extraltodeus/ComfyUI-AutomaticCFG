@@ -233,29 +233,11 @@ class simpleDynamicCFGlerpUncond:
     def patch(self, model, boost, negative_strength):
         advcfg = advancedDynamicCFG()
         m = advcfg.patch(model=model,
-                         automatic_cfg="hard", sigma_boost=boost,
+                         automatic_cfg="hard", skip_uncond=boost,
                          uncond_sigma_start = 100, uncond_sigma_end = 6.86,
                          lerp_uncond=negative_strength != 1, lerp_uncond_strength=negative_strength,
                          lerp_uncond_sigma_start = 100, lerp_uncond_sigma_end = 6.86
                          )[0]
-        return (m, )
-    
-class simpleDynamicCFGNoUncond:
-    @classmethod
-    def INPUT_TYPES(s):
-        return {"required": {
-                                "model": ("MODEL",),
-                              }}
-    RETURN_TYPES = ("MODEL",)
-    FUNCTION = "patch"
-
-    CATEGORY = "model_patches"
-
-    def patch(self, model):
-        advcfg = advancedDynamicCFG()
-        m = advcfg.patch(model=model, center_mean_post_cfg=True, center_mean_to_sigma=False,
-                         automatic_cfg="None", sigma_boost=False, sigma_boost_percentage=6.86,
-                         no_uncond_mode=True)[0]
         return (m, )
 
 class postCFGrescaleOnly:
