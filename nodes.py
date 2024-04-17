@@ -105,7 +105,7 @@ class advancedDynamicCFG:
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches"
+    CATEGORY = "model_patches/automatic_cfg"
 
     def patch(self, model, automatic_cfg = "None",
               skip_uncond = False, uncond_sigma_start = 50,  uncond_sigma_end = 6.86,
@@ -206,7 +206,7 @@ class simpleDynamicCFG:
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches"
+    CATEGORY = "model_patches/automatic_cfg/presets"
 
     def patch(self, model, boost):
         advcfg = advancedDynamicCFG()
@@ -228,7 +228,7 @@ class simpleDynamicCFGlerpUncond:
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches"
+    CATEGORY = "model_patches/automatic_cfg/presets"
 
     def patch(self, model, boost, negative_strength):
         advcfg = advancedDynamicCFG()
@@ -257,7 +257,7 @@ class postCFGrescaleOnly:
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches"
+    CATEGORY = "model_patches/automatic_cfg/presets"
 
     def patch(self, model,
               subtract_latent_mean, subtract_latent_mean_sigma_start, subtract_latent_mean_sigma_end,
@@ -271,4 +271,23 @@ class postCFGrescaleOnly:
                          latent_intensity_rescale_sigma_start = latent_intensity_rescale_sigma_start, latent_intensity_rescale_sigma_end = latent_intensity_rescale_sigma_end,
                          ignore_pre_cfg_func = True
                          )[0]
+        return (m, )
+
+class simpleDynamicCFGHighSpeed:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {
+                                "model": ("MODEL",),
+                              }}
+    RETURN_TYPES = ("MODEL",)
+    FUNCTION = "patch"
+
+    CATEGORY = "model_patches/automatic_cfg/presets"
+
+    def patch(self, model):
+        advcfg = advancedDynamicCFG()
+        m = advcfg.patch(model=model, automatic_cfg = "hard", skip_uncond = True, uncond_sigma_start = 50, uncond_sigma_end = 6.86,
+                         latent_intensity_rescale = True, latent_intensity_rescale_cfg = 7.6,
+                         latent_intensity_rescale_sigma_start = 100, latent_intensity_rescale_sigma_end = 50,
+                         latent_intensity_rescale_method = "hard")[0]
         return (m, )
