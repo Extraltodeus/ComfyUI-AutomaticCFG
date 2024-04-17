@@ -21,6 +21,12 @@ Updated:
 - Added "uncond_start_percentage" as an experimental feature. This allows to start the guidance later as a way to try [Applying Guidance in a Limited Interval Improves
 Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.07724.pdf). A more accurate implementation [can be found here](https://github.com/ericbeyer/guidance_interval) :)
 
+17.04.24
+
+- reworked the advanced node and cleaned up
+- added timing on every options
+- add a post-rescale node which allows to fight deep-frying images a bit more forr some special cases
+- added a tweaked version of the Comfy SAG node with start/end sliders
 
 # In short:
 
