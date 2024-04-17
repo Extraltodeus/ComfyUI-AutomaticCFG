@@ -32,10 +32,6 @@ For 100 steps this is where the sigma are reaching 1:
 
 There seem to be a slight improvement in quality when using the boost with my other node [CLIP Vector Sculptor text encode](https://github.com/Extraltodeus/Vector_Sculptor_ComfyUI) using the "mean" normalization option.
 
-# Negative prompt x10 works like a charm (+speed boost)
-
-![02062UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/7760da8d-9916-44ed-9c1f-e5ee1c05e077)
-
 # Just a note:
 
 Your CFG won't be your CFG anymore. It is turned into a way to guide the CFG/final intensity/brightness/saturation. So don't hesitate to change your habits while trying!
@@ -95,4 +91,7 @@ Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.
 - add a post-rescale node which allows to fight deep-frying images a bit more forr some special cases
 - added a tweaked version of the Comfy SAG node with start/end sliders
 
+# Negative prompt x5 +speed boost
+
+![02062UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/7760da8d-9916-44ed-9c1f-e5ee1c05e077)
 
