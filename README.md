@@ -2,9 +2,11 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 
 It also allows for up to 50% more speed since the latest update (default settings on the advanced node, 50% if used with the exponential scheduler).
 
+
+
 ## Last update:
 
-- changed start/end sliders, they are related directly to the sigma values and not in percentage anymore.
+- changed start/end sliders, they are related directly to the sigma values and not in percentage anymore. ⚠
 
 # In short:
 
