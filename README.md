@@ -4,7 +4,7 @@ It also allows for up to 50% more speed since the latest update (default setting
 
 ## Last update:
 
-- I changed the start/end sliders, they are related directly to the sigma values and not in percentage anymore.
+- changed start/end sliders, they are related directly to the sigma values and not in percentage anymore.
 
 # In short:
 
