@@ -84,23 +84,23 @@ class advancedDynamicCFG:
                                 "automatic_cfg" : (["None","soft","hard","range"], {"default": "hard"},),
 
                                 "skip_uncond" : ("BOOLEAN", {"default": True}),
-                                "uncond_sigma_start": ("FLOAT", {"default": 50.0, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
-                                "uncond_sigma_end":   ("FLOAT", {"default": 6.86, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
+                                "uncond_sigma_start": ("FLOAT", {"default": 7.5, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
+                                "uncond_sigma_end":   ("FLOAT", {"default": 1, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
 
                                 "lerp_uncond" : ("BOOLEAN", {"default": False}),
                                 "lerp_uncond_strength":    ("FLOAT", {"default": 2, "min": 0.0, "max": 10.0, "step": 0.1, "round": 0.1}),
-                                "lerp_uncond_sigma_start": ("FLOAT", {"default": 100,  "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
-                                "lerp_uncond_sigma_end":   ("FLOAT", {"default": 6.86, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
+                                "lerp_uncond_sigma_start": ("FLOAT", {"default": 15,  "min": 0.0, "max": 10000.0, "step": 0.01, "round": 0.01}),
+                                "lerp_uncond_sigma_end":   ("FLOAT", {"default": 1, "min": 0.0, "max": 10000.0, "step": 0.01, "round": 0.01}),
 
                                 "subtract_latent_mean" : ("BOOLEAN", {"default": False}),
-                                "subtract_latent_mean_sigma_start": ("FLOAT", {"default": 100,  "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
-                                "subtract_latent_mean_sigma_end":   ("FLOAT", {"default": 50.0, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
+                                "subtract_latent_mean_sigma_start": ("FLOAT", {"default": 15,  "min": 0.0, "max": 10000.0, "step": 0.01, "round": 0.01}),
+                                "subtract_latent_mean_sigma_end":   ("FLOAT", {"default": 7.5, "min": 0.0, "max": 10000.0, "step": 0.01, "round": 0.01}),
 
                                 "latent_intensity_rescale"     : ("BOOLEAN", {"default": True}),
                                 "latent_intensity_rescale_method" : (["soft","hard","range"], {"default": "hard"},),
-                                "latent_intensity_rescale_cfg" : ("FLOAT", {"default": 7.6,  "min": 0.0, "max": 100.0, "step": 0.1, "round": 0.01}),
-                                "latent_intensity_rescale_sigma_start": ("FLOAT", {"default": 100,  "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
-                                "latent_intensity_rescale_sigma_end":   ("FLOAT", {"default": 50, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
+                                "latent_intensity_rescale_cfg" : ("FLOAT", {"default": 7.6,  "min": 0.0, "max": 100.0, "step": 0.1, "round": 0.1}),
+                                "latent_intensity_rescale_sigma_start": ("FLOAT", {"default": 15,  "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
+                                "latent_intensity_rescale_sigma_end":   ("FLOAT", {"default": 7.5, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
                               }}
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
@@ -108,27 +108,29 @@ class advancedDynamicCFG:
     CATEGORY = "model_patches/automatic_cfg"
 
     def patch(self, model, automatic_cfg = "None",
-              skip_uncond = False, uncond_sigma_start = 50,  uncond_sigma_end = 6.86,
-              lerp_uncond = False,    lerp_uncond_strength = 1, lerp_uncond_sigma_start = 100, lerp_uncond_sigma_end = 6.86,
-              subtract_latent_mean     = False,   subtract_latent_mean_sigma_start      = 100, subtract_latent_mean_sigma_end     = 99,
-              latent_intensity_rescale = False,   latent_intensity_rescale_sigma_start  = 100, latent_intensity_rescale_sigma_end = 50,
+              skip_uncond = False, uncond_sigma_start = 15, uncond_sigma_end = 0,
+              lerp_uncond = False, lerp_uncond_strength = 1, lerp_uncond_sigma_start = 15, lerp_uncond_sigma_end = 1,
+              subtract_latent_mean     = False,   subtract_latent_mean_sigma_start      = 15, subtract_latent_mean_sigma_end     = 1,
+              latent_intensity_rescale = False,   latent_intensity_rescale_sigma_start  = 15, latent_intensity_rescale_sigma_end = 1,
               latent_intensity_rescale_cfg = 8, latent_intensity_rescale_method = "hard",
               ignore_pre_cfg_func = False):
         
         global minimum_sigma_to_disable_uncond, maximum_sigma_to_enable_uncond, global_skip_uncond
         sigmin, sigmax = get_sigmin_sigmax(model)
-        maximum_sigma_to_enable_uncond, minimum_sigma_to_disable_uncond = get_sigmas_start_end(sigmin, sigmax, uncond_sigma_start, uncond_sigma_end)
-        lerp_start, lerp_end          = get_sigmas_start_end(sigmin, sigmax, lerp_uncond_sigma_start, lerp_uncond_sigma_end)
-        subtract_start, subtract_end  = get_sigmas_start_end(sigmin, sigmax, subtract_latent_mean_sigma_start, subtract_latent_mean_sigma_end)
-        rescale_start, rescale_end    = get_sigmas_start_end(sigmin, sigmax, latent_intensity_rescale_sigma_start, latent_intensity_rescale_sigma_end)
-
+        
+        lerp_start, lerp_end          = lerp_uncond_sigma_start, lerp_uncond_sigma_end
+        subtract_start, subtract_end  = subtract_latent_mean_sigma_start, subtract_latent_mean_sigma_end
+        rescale_start, rescale_end    = latent_intensity_rescale_sigma_start, latent_intensity_rescale_sigma_end
+        print(f"Model maximum sigma: {sigmax} / Model minimum sigma: {sigmin}")
         if skip_uncond:
             global_skip_uncond = skip_uncond
             comfy.samplers.sampling_function = sampling_function_patched
-            print(f"Sampling function patched. Uncond enabled from {round(maximum_sigma_to_enable_uncond.item(),2)} to {round(minimum_sigma_to_disable_uncond.item(),2)}")
+            maximum_sigma_to_enable_uncond, minimum_sigma_to_disable_uncond = uncond_sigma_start, uncond_sigma_end
+            print(f"Sampling function patched. Uncond enabled from {round(maximum_sigma_to_enable_uncond,2)} to {round(minimum_sigma_to_disable_uncond,2)}")
         elif not ignore_pre_cfg_func:
             global_skip_uncond = skip_uncond # just in case of mixup with another node
             comfy.samplers.sampling_function = original_sampling_function
+            maximum_sigma_to_enable_uncond, minimum_sigma_to_disable_uncond = 1000000, 0
             print(f"Sampling function unpatched.")
         
         top_k = 0.25
@@ -140,7 +142,7 @@ class advancedDynamicCFG:
             uncond_pred = args["uncond_denoised"]
             sigma = args["sigma"][0]
 
-            if sigma == sigmax or cond_scale > 1:
+            if sigma >= sigmax or cond_scale > 1:
                 self.last_cfg_ht_one = cond_scale
             target_intensity = self.last_cfg_ht_one / 10
 
@@ -212,7 +214,7 @@ class simpleDynamicCFG:
         advcfg = advancedDynamicCFG()
         m = advcfg.patch(model,
                          skip_uncond = boost,
-                         uncond_sigma_start = 100,  uncond_sigma_end = 6.86,
+                         uncond_sigma_start = 15,  uncond_sigma_end = 1,
                          automatic_cfg = "hard" if boost else "soft"
                          )[0]
         return (m, )
@@ -234,9 +236,9 @@ class simpleDynamicCFGlerpUncond:
         advcfg = advancedDynamicCFG()
         m = advcfg.patch(model=model,
                          automatic_cfg="hard", skip_uncond=boost,
-                         uncond_sigma_start = 100, uncond_sigma_end = 6.86,
+                         uncond_sigma_start = 15, uncond_sigma_end = 1,
                          lerp_uncond=negative_strength != 1, lerp_uncond_strength=negative_strength,
-                         lerp_uncond_sigma_start = 100, lerp_uncond_sigma_end = 6.86
+                         lerp_uncond_sigma_start = 15, lerp_uncond_sigma_end = 1
                          )[0]
         return (m, )
 
@@ -246,13 +248,13 @@ class postCFGrescaleOnly:
         return {"required": {
                                 "model": ("MODEL",),
                                 "subtract_latent_mean" : ("BOOLEAN", {"default": True}),
-                                "subtract_latent_mean_sigma_start": ("FLOAT", {"default": 100,  "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
-                                "subtract_latent_mean_sigma_end":   ("FLOAT", {"default": 50.0, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
+                                "subtract_latent_mean_sigma_start": ("FLOAT", {"default": 15,  "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.1}),
+                                "subtract_latent_mean_sigma_end":   ("FLOAT", {"default": 7.5, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.1}),
                                 "latent_intensity_rescale"     : ("BOOLEAN", {"default": True}),
                                 "latent_intensity_rescale_method" : (["soft","hard","range"], {"default": "hard"},),
-                                "latent_intensity_rescale_cfg" : ("FLOAT", {"default": 7.6,  "min": 0.0, "max": 100.0, "step": 0.1, "round": 0.01}),
-                                "latent_intensity_rescale_sigma_start": ("FLOAT", {"default": 100,  "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
-                                "latent_intensity_rescale_sigma_end":   ("FLOAT", {"default": 50, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
+                                "latent_intensity_rescale_cfg" : ("FLOAT", {"default": 7.6,  "min": 0.0, "max": 100.0, "step": 0.1, "round": 0.1}),
+                                "latent_intensity_rescale_sigma_start": ("FLOAT", {"default": 15,  "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.1}),
+                                "latent_intensity_rescale_sigma_end":   ("FLOAT", {"default": 7.5, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.1}),
                               }}
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
@@ -286,8 +288,9 @@ class simpleDynamicCFGHighSpeed:
 
     def patch(self, model):
         advcfg = advancedDynamicCFG()
-        m = advcfg.patch(model=model, automatic_cfg = "hard", skip_uncond = True, uncond_sigma_start = 50, uncond_sigma_end = 6.86,
-                         latent_intensity_rescale = True, latent_intensity_rescale_cfg = 7.6,
-                         latent_intensity_rescale_sigma_start = 100, latent_intensity_rescale_sigma_end = 50,
+        m = advcfg.patch(model=model, automatic_cfg = "hard",
+                         skip_uncond = True, uncond_sigma_start = 7.5, uncond_sigma_end = 1,
+                         latent_intensity_rescale = False, latent_intensity_rescale_cfg = 7.6,
+                         latent_intensity_rescale_sigma_start = 15, latent_intensity_rescale_sigma_end = 7.5,
                          latent_intensity_rescale_method = "hard")[0]
         return (m, )
