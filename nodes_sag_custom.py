@@ -99,22 +99,16 @@ class SelfAttentionGuidanceCustom:
         return {"required": { "model": ("MODEL",),
                              "scale": ("FLOAT", {"default": 0.5, "min": -2.0, "max": 5.0, "step": 0.1}),
                              "blur_sigma": ("FLOAT", {"default": 2.0, "min": 0.0, "max": 10.0, "step": 0.1}),
-                             "sigma_start_percentage": ("FLOAT", {"default": 100.0, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
-                             "sigma_end_percentage": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 100.0, "step": 0.01, "round": 0.01}),
+                             "sigma_start": ("FLOAT", {"default": 15.0, "min": 0.0, "max": 1000.0, "step": 0.1, "round": 0.1}),
+                             "sigma_end": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1000.0, "step": 0.1, "round": 0.1}),
                               }}
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
 
     CATEGORY = "model_patches"
 
-    def patch(self, model, scale, blur_sigma, sigma_start_percentage, sigma_end_percentage):
+    def patch(self, model, scale, blur_sigma, sigma_start, sigma_end):
         m = model.clone()
-
-        model_sampling = model.model.model_sampling
-        sigmin = model_sampling.sigma(model_sampling.timestep(model_sampling.sigma_min))
-        sigmax = model_sampling.sigma(model_sampling.timestep(model_sampling.sigma_max))
-        high_sigma_threshold = (sigmax - sigmin) / 100 * sigma_start_percentage
-        low_sigma_threshold  = (sigmax - sigmin) / 100 * sigma_end_percentage
         
         attn_scores = None
 
@@ -155,7 +149,7 @@ class SelfAttentionGuidanceCustom:
                 return cfg_result
             if min(cfg_result.shape[2:]) <= 4: #skip when too small to add padding
                 return cfg_result
-            if sigma[0] > high_sigma_threshold or sigma[0] < low_sigma_threshold:
+            if sigma[0] > sigma_start or sigma[0] < sigma_end:
                 return cfg_result
             # create the adversarially blurred image
             degraded = create_blur_map(uncond_pred, uncond_attn, sag_sigma, sag_threshold)
