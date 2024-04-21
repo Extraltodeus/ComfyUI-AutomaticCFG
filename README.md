@@ -2,6 +2,10 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 
 It also allows for up to 50% more speed since the latest update (default settings on the advanced node, 50% if used with the exponential scheduler).
 
+## Last update:
+
+- I changed the start/end sliders, they are related directly to the sigma values and not in percentage anymore.
+
 # In short:
 
 Quality > prompt following (but somehow it also feels like it follows the prompt more so... I'll let you decide)
