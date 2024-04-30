@@ -1,41 +1,62 @@
+import math
 from copy import deepcopy
+
 import comfy.samplers
 import numpy as np
 import torch
-import math
 import torch.nn.functional as F
 from colorama import Fore, Style
 
-original_sampling_function = deepcopy(comfy.samplers.sampling_function)
-minimum_sigma_to_disable_uncond = 0
-maximum_sigma_to_enable_uncond  = 1000000
-global_skip_uncond = False
+original_sampling_function = None
 
-def sampling_function_patched(model, x, timestep, uncond, cond, cond_scale, model_options={}, seed=None):
-        if math.isclose(cond_scale, 1.0) and model_options.get("disable_cfg1_optimization", False) == False or ((timestep[0] < minimum_sigma_to_disable_uncond or timestep[0] > maximum_sigma_to_enable_uncond) and global_skip_uncond):
-            uncond_ = None
-        else:
-            uncond_ = uncond
+def sampling_function_patched(model, x, timestep, uncond, cond, cond_scale, model_options={}, seed=None, **kwargs):
+    if "sampler_pre_cfg_function" in model_options:
+        uncond, cond, cond_scale = model_options["sampler_pre_cfg_function"](
+            sigma=timestep, uncond=uncond, cond=cond, cond_scale=cond_scale
+        )
+    if math.isclose(cond_scale, 1.0) and model_options.get("disable_cfg1_optimization", False) == False:
+        uncond_ = None
+    else:
+        uncond_ = uncond
 
-        conds = [cond, uncond_]
+    conds = [cond, uncond_]
 
-        out = comfy.samplers.calc_cond_batch(model, conds, x, timestep, model_options)
-        cond_pred = out[0]
-        uncond_pred = out[1]
+    out = comfy.samplers.calc_cond_batch(model, conds, x, timestep, model_options)
+    cond_pred = out[0]
+    uncond_pred = out[1]
 
-        if "sampler_cfg_function" in model_options:
-            args = {"cond": x - cond_pred, "uncond": x - uncond_pred, "cond_scale": cond_scale, "timestep": timestep, "input": x, "sigma": timestep,
-                    "cond_denoised": cond_pred, "uncond_denoised": uncond_pred, "model": model, "model_options": model_options, "cond_pos": cond, "cond_neg": uncond}
-            cfg_result = x - model_options["sampler_cfg_function"](args)
-        else:
-            cfg_result = uncond_pred + (cond_pred - uncond_pred) * cond_scale
+    if "sampler_cfg_function" in model_options:
+        args = {"cond": x - cond_pred, "uncond": x - uncond_pred, "cond_scale": cond_scale, "timestep": timestep, "input": x, "sigma": timestep,
+                "cond_denoised": cond_pred, "uncond_denoised": uncond_pred, "model": model, "model_options": model_options, "cond_pos": cond, "cond_neg": uncond}
+        cfg_result = x - model_options["sampler_cfg_function"](args)
+    else:
+        cfg_result = uncond_pred + (cond_pred - uncond_pred) * cond_scale
 
-        for fn in model_options.get("sampler_post_cfg_function", []):
-            args = {"denoised": cfg_result, "cond": cond, "uncond": uncond, "model": model, "uncond_denoised": uncond_pred, "cond_denoised": cond_pred,
-                    "sigma": timestep, "model_options": model_options, "input": x}
-            cfg_result = fn(args)
+    for fn in model_options.get("sampler_post_cfg_function", []):
+        args = {"denoised": cfg_result, "cond": cond, "uncond": uncond, "model": model, "uncond_denoised": uncond_pred, "cond_denoised": cond_pred,
+                "sigma": timestep, "model_options": model_options, "input": x}
+        cfg_result = fn(args)
 
-        return cfg_result
+    return cfg_result
+
+
+def monkey_patching_comfy_sampling_function():
+    global original_sampling_function
+
+    if original_sampling_function is None:
+        original_sampling_function = comfy.samplers.sampling_function
+    # Make sure to only patch once
+    if hasattr(comfy.samplers.sampling_function, '_automatic_cfg_decorated'):
+        return
+    comfy.samplers.sampling_function = sampling_function_patched
+    comfy.samplers.sampling_function._automatic_cfg_decorated = True # flag to check monkey patch
+
+def make_sampler_pre_cfg_function(minimum_sigma_to_disable_uncond=0, maximum_sigma_to_enable_uncond=1000000):
+    def sampler_pre_cfg_function(sigma, uncond, cond, cond_scale, **kwargs):
+        if sigma[0] < minimum_sigma_to_disable_uncond or sigma[0] > maximum_sigma_to_enable_uncond:
+            uncond = None
+        return uncond, cond, cond_scale
+    return sampler_pre_cfg_function
 
 def get_entropy(tensor):
     hist = np.histogram(tensor.cpu(), bins=100)[0]
@@ -281,7 +302,7 @@ class advancedDynamicCFG:
               fake_uncond_exp = False, fake_uncond_exp_method = "amplify", fake_uncond_exp_value = 2, fake_uncond_exp_normalize = False, fake_uncond_multiplier = 1, fake_uncond_sigma_start = 15, fake_uncond_sigma_end = 5.5,
               latent_intensity_rescale_cfg = 8, latent_intensity_rescale_method = "hard",
               ignore_pre_cfg_func = False, eval_string = "", args_filter = ""):
-
+        monkey_patching_comfy_sampling_function()
         args = locals()
         if args_filter != "":
             args_filter = args_filter.split(",")
@@ -292,25 +313,21 @@ class advancedDynamicCFG:
             not_in_filter.append("eval_string")
         args_str = '\n'.join(f'{k}: {v}' for k, v in locals().items() if k not in not_in_filter and k in args_filter)
 
-        global minimum_sigma_to_disable_uncond, maximum_sigma_to_enable_uncond, global_skip_uncond
         sigmin, sigmax = get_sigmin_sigmax(model)
-        
+
         lerp_start, lerp_end          = lerp_uncond_sigma_start, lerp_uncond_sigma_end
         subtract_start, subtract_end  = subtract_latent_mean_sigma_start, subtract_latent_mean_sigma_end
         rescale_start, rescale_end    = latent_intensity_rescale_sigma_start, latent_intensity_rescale_sigma_end
         print(f"Model maximum sigma: {sigmax} / Model minimum sigma: {sigmin}")
+        m = model.clone()
         if skip_uncond:
-            global_skip_uncond = skip_uncond
-            comfy.samplers.sampling_function = sampling_function_patched
-            maximum_sigma_to_enable_uncond, minimum_sigma_to_disable_uncond = uncond_sigma_start, uncond_sigma_end
-            print(f"Sampling function patched. Uncond enabled from {round(maximum_sigma_to_enable_uncond,2)} to {round(minimum_sigma_to_disable_uncond,2)}")
-            print("To unpatch the function and so avoid black images: run one batch with the skip_uncond/boost toggle turned off or use the unpatching node!")
+            # set model_options sampler_pre_cfg_function
+            m.model_options["sampler_pre_cfg_function"] = make_sampler_pre_cfg_function(uncond_sigma_end, uncond_sigma_start)
+            print(f"Sampling function patched. Uncond enabled from {round(uncond_sigma_start,2)} to {round(uncond_sigma_end,2)}")
         elif not ignore_pre_cfg_func:
-            global_skip_uncond = skip_uncond # just in case of mixup with another node
-            comfy.samplers.sampling_function = original_sampling_function
-            maximum_sigma_to_enable_uncond, minimum_sigma_to_disable_uncond = 1000000, 0
-            print(f"Sampling function unpatched.")
-        
+            m.model_options.pop("sampler_pre_cfg_function", None)
+            uncond_sigma_start, uncond_sigma_end = 1000000, 0
+
         top_k = 0.25
         reference_cfg = 8
         previous_cond_pred = None
@@ -345,9 +362,9 @@ class advancedDynamicCFG:
                 self.last_cfg_ht_one = cond_scale
             target_intensity = self.last_cfg_ht_one / 10
 
-            if ((check_skip(sigma, maximum_sigma_to_enable_uncond, minimum_sigma_to_disable_uncond) and skip_uncond) and not fake_uncond_step()) or cond_scale == 1:
+            if ((check_skip(sigma, uncond_sigma_start, uncond_sigma_end) and skip_uncond) and not fake_uncond_step()) or cond_scale == 1:
                 return input_x - cond_pred
-            
+
             if lerp_uncond and not check_skip(sigma, lerp_start, lerp_end) and lerp_uncond_strength != 1:
                 uncond_pred = torch.lerp(cond_pred, uncond_pred, lerp_uncond_strength)
             cond   = input_x - cond_pred
@@ -355,9 +372,9 @@ class advancedDynamicCFG:
 
             if automatic_cfg == "None":
                 return uncond + cond_scale * (cond - uncond)
-            
+
             denoised_tmp = input_x - (uncond + reference_cfg * (cond - uncond))
-            
+
             for b in range(len(denoised_tmp)):
                 denoised_ranges = get_denoised_ranges(denoised_tmp[b], automatic_cfg, top_k)
                 for c in range(len(denoised_tmp[b])):
@@ -365,7 +382,7 @@ class advancedDynamicCFG:
                     denoised_tmp[b][c] = uncond[b][c] + fixeds_scale * (cond[b][c] - uncond[b][c])
 
             return denoised_tmp
-        
+
         def center_mean_latent_post_cfg(args):
             denoised = args["denoised"]
             sigma    = args["sigma"][0]
@@ -377,7 +394,7 @@ class advancedDynamicCFG:
         def rescale_post_cfg(args):
             denoised   = args["denoised"]
             sigma      = args["sigma"][0]
-            
+
             if check_skip(sigma, rescale_start, rescale_end):
                 return denoised
             target_intensity = latent_intensity_rescale_cfg / 10
@@ -387,8 +404,7 @@ class advancedDynamicCFG:
                     scale_correction = target_intensity / denoised_ranges[c]
                     denoised[b][c]   = denoised[b][c] * scale_correction
             return denoised
-        
-        m = model.clone()
+
         if not ignore_pre_cfg_func:
             m.set_model_sampler_cfg_function(automatic_cfg_function, disable_cfg1_optimization = False)
         if subtract_latent_mean:
@@ -491,7 +507,7 @@ class simpleDynamicCFGHighSpeed:
         m = advcfg.patch(model=model, automatic_cfg = "hard",
                          skip_uncond = True, uncond_sigma_start = 7.5, uncond_sigma_end = 1)[0]
         return (m, )
-    
+
 class simpleDynamicCFGwarpDrive:
     @classmethod
     def INPUT_TYPES(s):
@@ -533,9 +549,6 @@ class simpleDynamicCFGunpatch:
     CATEGORY = "model_patches/automatic_cfg"
 
     def unpatch(self, model):
-        global global_skip_uncond, maximum_sigma_to_enable_uncond, minimum_sigma_to_disable_uncond
-        global_skip_uncond = False # just in case of mixup with another node
-        comfy.samplers.sampling_function = original_sampling_function
-        maximum_sigma_to_enable_uncond, minimum_sigma_to_disable_uncond = 1000000, 0
-        print(f"Sampling function unpatched.")
-        return (model, )
+        m = model.clone()
+        m.model_options.pop("sampler_pre_cfg_function", None)
+        return (m, )

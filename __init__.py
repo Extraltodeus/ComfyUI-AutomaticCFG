@@ -7,6 +7,10 @@ NODE_CLASS_MAPPINGS = {
     "Automatic CFG - Warp Drive": simpleDynamicCFGwarpDrive,
     "Automatic CFG - Advanced": advancedDynamicCFG,
     "Automatic CFG - Post rescale only": postCFGrescaleOnly,
-    "Automatic CFG - Unpatch function": simpleDynamicCFGunpatch,
+    "Automatic CFG - Unpatch function": simpleDynamicCFGunpatch,    # (Deprecated) No need anymore
     "SAG delayed activation": SelfAttentionGuidanceCustom,
+}
+
+NODE_DISPLAY_NAME_MAPPINGS = {
+    "Automatic CFG - Unpatch function": "Automatic CFG - Unpatch function(Deprecated)",
 }
