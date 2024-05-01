@@ -3,6 +3,12 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 ## Last update:
 
 - added the "Warp drive" node.
+  - It turns this:
+    ![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/2b6a78bc-7a15-40bb-83bd-db9408226c8d)
+  - To that:
+    ![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/96871c65-f9f7-489d-8c32-a6bd651c4e53)
+
+
 
 # In short:
 
