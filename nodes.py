@@ -303,6 +303,7 @@ class advancedDynamicCFG:
             comfy.samplers.sampling_function = sampling_function_patched
             maximum_sigma_to_enable_uncond, minimum_sigma_to_disable_uncond = uncond_sigma_start, uncond_sigma_end
             print(f"Sampling function patched. Uncond enabled from {round(maximum_sigma_to_enable_uncond,2)} to {round(minimum_sigma_to_disable_uncond,2)}")
+            print("To unpatch the function and so avoid black images: run one batch with the skip_uncond/boost toggle turned off or use the unpatching node!")
         elif not ignore_pre_cfg_func:
             global_skip_uncond = skip_uncond # just in case of mixup with another node
             comfy.samplers.sampling_function = original_sampling_function
