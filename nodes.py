@@ -256,7 +256,7 @@ class advancedDynamicCFG:
                                 "fake_uncond_exp_normalize": ("BOOLEAN", {"default": False}),
                                 "fake_uncond_exp_method" : (["normal", "previous_average", "amplify", "root", "power", "erf", "erf_amplify", "exp_erf", "root_erf", "sine", "sine_exp", "sine_exp_diff", "sine_exp_diff_to_sine", "sine_root", "sine_root_diff", "sine_root_diff_to_sine", "theDaRkNeSs", "cosine", "sign", "zero", "eval"],),
                                 "fake_uncond_exp_value": ("FLOAT", {"default": 2, "min": 1, "max": 1000, "step": 0.1, "round": 0.01}),
-                                "fake_uncond_multiplier": ("INT", {"default": -1, "min": -1, "max": 1, "step": 1}),
+                                "fake_uncond_multiplier": ("INT", {"default": 1, "min": -1, "max": 1, "step": 1}),
                                 "fake_uncond_sigma_start": ("FLOAT", {"default": 15,  "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
                                 "fake_uncond_sigma_end": ("FLOAT", {"default": 5.5,  "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
                               },
@@ -277,7 +277,7 @@ class advancedDynamicCFG:
               latent_intensity_rescale = False,   latent_intensity_rescale_sigma_start  = 15, latent_intensity_rescale_sigma_end = 1,
               cond_exp = False, cond_exp_sigma_start  = 15, cond_exp_sigma_end = 14, cond_exp_method = "amplify", cond_exp_value = 2, cond_exp_normalize = False,
               uncond_exp = False, uncond_exp_sigma_start  = 15, uncond_exp_sigma_end = 14, uncond_exp_method = "amplify", uncond_exp_value = 2, uncond_exp_normalize = False,
-              fake_uncond_exp = False, fake_uncond_exp_method = "amplify", fake_uncond_exp_value = 2, fake_uncond_exp_normalize = False, fake_uncond_multiplier = -1, fake_uncond_sigma_start = 15, fake_uncond_sigma_end = 5.5,
+              fake_uncond_exp = False, fake_uncond_exp_method = "amplify", fake_uncond_exp_value = 2, fake_uncond_exp_normalize = False, fake_uncond_multiplier = 1, fake_uncond_sigma_start = 15, fake_uncond_sigma_end = 5.5,
               latent_intensity_rescale_cfg = 8, latent_intensity_rescale_method = "hard",
               ignore_pre_cfg_func = False, eval_string = "", args_filter = ""):
 
