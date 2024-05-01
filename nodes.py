@@ -510,7 +510,7 @@ class simpleDynamicCFGwarpDrive:
         advcfg = advancedDynamicCFG()
         print(f"{Fore.CYAN}WARP DRIVE MODE ENGAGED!{Style.RESET_ALL}\nSettings suggestions:\n"
             f"              {Fore.GREEN}1/1/1:  {Fore.YELLOW}Maaaxxxiiimum speeeeeed.{Style.RESET_ALL} {Fore.RED}Uncond disabled.{Style.RESET_ALL} {Fore.MAGENTA}Fasten your seatbelt!{Style.RESET_ALL}\n"
-            f"              {Fore.GREEN}3/1/1:  {Fore.YELLOW}Risky space-time continuum distortion,{Style.RESET_ALL} {Fore.MAGENTA}awesome for prompts with a clear subject!{Style.RESET_ALL}\n"
+            f"              {Fore.GREEN}3/1/1:  {Fore.YELLOW}Risky space-time continuum distortion.{Style.RESET_ALL} {Fore.MAGENTA}Awesome for prompts with a clear subject!{Style.RESET_ALL}\n"
             f"              {Fore.GREEN}5.5/1/1: {Fore.GREEN}Frameshift Drive Autopilot: Engaged.{Style.RESET_ALL} {Fore.MAGENTA}Should work with anything but do it better and faster!{Style.RESET_ALL}")
         m = advcfg.patch(model=model, automatic_cfg = "hard",
                          skip_uncond = True, uncond_sigma_start = uncond_sigma_start, uncond_sigma_end = uncond_sigma_end,
