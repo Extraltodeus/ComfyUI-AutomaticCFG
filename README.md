@@ -24,6 +24,8 @@ For 100 steps this is where the sigma are reaching 1:
 
 ![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/525199f1-2857-4027-a96e-105bc4b01860)
 
+Note: the warp drive node improves the speed a lot more. The average speed is 160% the normal one if used with the AYS scheduler (check the workflow images).
+
 There seem to be a slight improvement in quality when using the boost with my other node [CLIP Vector Sculptor text encode](https://github.com/Extraltodeus/Vector_Sculptor_ComfyUI) using the "mean" normalization option.
 
 # Just a note:
