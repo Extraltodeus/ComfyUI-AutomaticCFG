@@ -10,7 +10,7 @@ It also allows for up to 50% more speed since the latest update (default setting
 
 # In short:
 
-Quality > prompt following (but somehow it also feels like it follows the prompt more so... I'll let you decide)
+No more burns and faster gens.
 
 # Usage:
 
