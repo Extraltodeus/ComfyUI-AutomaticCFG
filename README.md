@@ -1,6 +1,6 @@
 My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much but it's honest work.
 
-It also allows for up to 50% more speed since the latest update (default settings on the advanced node, 50% if used with the exponential scheduler).
+It also allows for up to ~~50%~~ WARP DRIVE more speed since the latest update (default settings on the advanced node, 50% if used with the exponential scheduler).
 
 
 
