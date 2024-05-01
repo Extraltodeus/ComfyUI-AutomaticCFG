@@ -2,7 +2,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 
 ## Last update:
 
-- added the "Warp drive" node.
+- added the "Warp drive" node. It uses a new method of my own cooking which uses the previous step to determin a negative. Cutting the generation time by half for approx 3/4 of the steps.
 
 
 # In short:
