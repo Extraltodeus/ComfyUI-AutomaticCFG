@@ -14,18 +14,7 @@ No more burns and faster gens.
 
 # Usage:
 
-Normal node:
-
 ![77889aa6-a2f6-48bf-8cde-17c9cbfda5fa](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/c725a06c-8966-43de-ab1c-569e2ff5b151)
-
-Negative strength version:
-
-![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/e8099078-2f3e-4067-827d-57a95989e2d3)
-
-No uncond:
-
-![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/a6262aad-b6ed-46f9-8ac2-86a4214a40c0)
-
 
 
 ### That's it!
