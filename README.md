@@ -6,7 +6,7 @@ It also allows for up to ~~50%~~ WARP DRIVE more speed since the latest update (
 
 ## Last update:
 
-- changed start/end sliders, they are related directly to the sigma values and not in percentage anymore. ⚠
+
 
 # In short:
 
@@ -87,6 +87,12 @@ Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.
 - added timing on every options
 - add a post-rescale node which allows to fight deep-frying images a bit more forr some special cases
 - added a tweaked version of the Comfy SAG node with start/end sliders
+- changed start/end sliders, they are related directly to the sigma values and not in percentage anymore. ⚠
+
+01.05.24
+
+- Actually working disabled uncond
+- Added "warp drive" preset to test it out simply.
 
 # Negative prompt x5 +speed boost
 
