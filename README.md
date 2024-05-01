@@ -2,7 +2,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 
 ## Last update:
 
-- added the "Warp drive" node. WAIT A SECOND before downloading it because I messed up the preset <.<
+- added the "Warp drive" node.
 
 
 # In short:
