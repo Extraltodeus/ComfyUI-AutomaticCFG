@@ -4,6 +4,7 @@ import numpy as np
 import torch
 import math
 import torch.nn.functional as F
+from colorama import Fore, Style
 
 original_sampling_function = deepcopy(comfy.samplers.sampling_function)
 minimum_sigma_to_disable_uncond = 0
@@ -102,7 +103,7 @@ def blur_tensor(input_tensor, sigma=2, kernel_size=7):
         blurred_batch.append(torch.stack(blurred_channels))
     return torch.stack(blurred_batch).to(device)
 
-def square_and_norm(cond_input, method, exp_value, exp_normalize, pcp, psi, sigma, args, eval_string = ""):
+def square_and_norm(cond_input, method, exp_value, exp_normalize, pcp, psi, sigma, sigmax, args, eval_string = ""):
     """
     There may or may not be an actual reasoning behind each of these methods.
     Some like the sine value have interesting properties. Enabled for both cond and uncond preds it somehow make them stronger.
@@ -191,7 +192,7 @@ def square_and_norm(cond_input, method, exp_value, exp_normalize, pcp, psi, sigm
     elif method == "zero":
         cond = torch.zeros_like(cond)
     elif method == "previous_average":
-        if sigma > 14:
+        if sigma > (sigmax - 1):
             cond = torch.zeros_like(cond)
         else:
             cond = (pcp / psi * sigma + cond) / 2
@@ -333,11 +334,11 @@ class advancedDynamicCFG:
                 uncond_pred = cond_pred.clone() * fake_uncond_multiplier
 
             if cond_exp and sigma <= cond_exp_sigma_start and sigma >= cond_exp_sigma_end:
-                cond_pred = square_and_norm(cond_pred, cond_exp_method, cond_exp_value, cond_exp_normalize, previous_cond_pred, previous_sigma, sigma.item(), args)
+                cond_pred = square_and_norm(cond_pred, cond_exp_method, cond_exp_value, cond_exp_normalize, previous_cond_pred, previous_sigma, sigma.item(), sigmax, args)
             if uncond_exp and sigma <= uncond_exp_sigma_start and sigma >= uncond_exp_sigma_end and not fake_uncond_step():
-                uncond_pred = square_and_norm(uncond_pred, uncond_exp_method, uncond_exp_value, uncond_exp_normalize, previous_cond_pred, previous_sigma, sigma.item(), args)
+                uncond_pred = square_and_norm(uncond_pred, uncond_exp_method, uncond_exp_value, uncond_exp_normalize, previous_cond_pred, previous_sigma, sigma.item(), sigmax, args)
             if fake_uncond_step() and fake_uncond_exp:
-                uncond_pred = square_and_norm(uncond_pred, fake_uncond_exp_method, fake_uncond_exp_value, fake_uncond_exp_normalize, previous_cond_pred, previous_sigma, sigma.item(), args, eval_string)
+                uncond_pred = square_and_norm(uncond_pred, fake_uncond_exp_method, fake_uncond_exp_value, fake_uncond_exp_normalize, previous_cond_pred, previous_sigma, sigma.item(), sigmax, args, eval_string)
             previous_cond_pred = deepcopy(cond_pred)
 
             if sigma >= sigmax or cond_scale > 1:
@@ -496,7 +497,7 @@ class simpleDynamicCFGwarpDrive:
     def INPUT_TYPES(s):
         return {"required": {
                                 "model": ("MODEL",),
-                                "uncond_sigma_start": ("FLOAT", {"default": 3.0, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
+                                "uncond_sigma_start": ("FLOAT", {"default": 5.5, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
                                 "uncond_sigma_end":   ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
                                 "fake_uncond_sigma_end": ("FLOAT", {"default": 1.0,  "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
                               }}
@@ -507,6 +508,10 @@ class simpleDynamicCFGwarpDrive:
 
     def patch(self, model, uncond_sigma_start, uncond_sigma_end, fake_uncond_sigma_end):
         advcfg = advancedDynamicCFG()
+        print(f"{Fore.CYAN}WARP DRIVE MODE ENGAGED!{Style.RESET_ALL}\nSettings suggestions:\n"
+            f"              {Fore.GREEN}1/1/1:  {Fore.YELLOW}Maaaxxxiiimum speeeeeed.{Style.RESET_ALL} {Fore.RED}Uncond disabled.{Style.RESET_ALL} {Fore.MAGENTA}Fasten your seatbelt!{Style.RESET_ALL}\n"
+            f"              {Fore.GREEN}3/1/1:  {Fore.YELLOW}Risky space-time continuum distortion,{Style.RESET_ALL} {Fore.MAGENTA}awesome for prompts with a clear subject!{Style.RESET_ALL}\n"
+            f"              {Fore.GREEN}5.5/1/1: {Fore.GREEN}Frameshift Drive Autopilot: Engaged.{Style.RESET_ALL} {Fore.MAGENTA}Should work with anything but do it better and faster!{Style.RESET_ALL}")
         m = advcfg.patch(model=model, automatic_cfg = "hard",
                          skip_uncond = True, uncond_sigma_start = uncond_sigma_start, uncond_sigma_end = uncond_sigma_end,
                          fake_uncond_sigma_end = fake_uncond_sigma_end, fake_uncond_sigma_start = 1000, fake_uncond_start=True,
