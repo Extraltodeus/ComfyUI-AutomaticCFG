@@ -7,7 +7,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 
 # In short:
 
-No more burns and 150% faster gens.
+No more burns and 160% faster gens with the warp drive node.
 
 # Usage:
 
