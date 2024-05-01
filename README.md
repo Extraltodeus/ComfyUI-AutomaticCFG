@@ -97,4 +97,14 @@ Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.
 
 ![02871UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/2edfbf05-0683-4c62-ad97-b21087325e7f)
 
+# cherry-picked 24 steps uncond fully disabled (these images are also workflows):
+
+
+![03619UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/19ee6edc-b039-4472-9ec2-c08ea15dd908)
+
+![03621UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/52695e1c-d28e-427f-9109-7ee4e4b3a5f6)
+
+![03604UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/ca391b46-f587-43da-98da-a87e4982e4ed)
+
+
 
