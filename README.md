@@ -3,6 +3,10 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 ## Last update:
 
 - added the "Warp drive" node. It uses a new method of my own cooking which uses the previous step to determin a negative. Cutting the generation time by half for approx 3/4 of the steps.
+- Setting suggestions for this node (there are example workflows tho) there are 3 sliders:
+    - all sliders at 1: Maximum speed / no uncond. Results will vary greatly depending on your model and prompt.
+    - 3.0 / 1 / 1 : fast but chaotic with prompts without a clear subject. Can generate plain color images sometimes.
+    - 5.5 / 1 / 1 : fast and secure.
 - added example workflows with 10-12 steps but of course you can do more steps if needed. It is not a goal to do less steps in general but also to show it is compatible.
 
 
