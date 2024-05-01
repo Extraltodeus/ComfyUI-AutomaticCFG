@@ -93,11 +93,8 @@ Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.
 - Actually working disabled uncond
 - Added "warp drive" preset to test it out simply.
 
-# 10 steps with only 2 having the negative enabled. So ~170% faster. 2.5 seconds with a RTX4070
+# 10 steps with only 2 having the negative enabled. So ~170% faster. 2.5 seconds on a RTX4070
 
 ![02871UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/2edfbf05-0683-4c62-ad97-b21087325e7f)
 
-# Negative prompt x5 +speed boost
-
-![02062UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/7760da8d-9916-44ed-9c1f-e5ee1c05e077)
 
