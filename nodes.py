@@ -500,13 +500,14 @@ class simpleDynamicCFGwarpDrive:
                                 "uncond_sigma_start": ("FLOAT", {"default": 5.5, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
                                 "uncond_sigma_end":   ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
                                 "fake_uncond_sigma_end": ("FLOAT", {"default": 1.0,  "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
+                                "less_clutter": ("BOOLEAN", {"default": True}),
                               }}
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
 
     CATEGORY = "model_patches/automatic_cfg/presets"
 
-    def patch(self, model, uncond_sigma_start, uncond_sigma_end, fake_uncond_sigma_end):
+    def patch(self, model, uncond_sigma_start, uncond_sigma_end, fake_uncond_sigma_end, less_clutter):
         advcfg = advancedDynamicCFG()
         print(f"                                                {Fore.CYAN}WARP DRIVE MODE ENGAGED!{Style.RESET_ALL}\n    Settings suggestions:\n"
             f"              {Fore.GREEN}1/1/1:   {Fore.YELLOW}Maaaxxxiiimum speeeeeed.{Style.RESET_ALL} {Fore.RED}Uncond disabled.{Style.RESET_ALL} {Fore.MAGENTA}Fasten your seatbelt!{Style.RESET_ALL}\n"
@@ -515,7 +516,8 @@ class simpleDynamicCFGwarpDrive:
         m = advcfg.patch(model=model, automatic_cfg = "hard",
                          skip_uncond = True, uncond_sigma_start = uncond_sigma_start, uncond_sigma_end = uncond_sigma_end,
                          fake_uncond_sigma_end = fake_uncond_sigma_end, fake_uncond_sigma_start = 1000, fake_uncond_start=True,
-                         fake_uncond_exp=True,fake_uncond_exp_normalize=True,fake_uncond_exp_method="previous_average"
+                         fake_uncond_exp=True,fake_uncond_exp_normalize=True,fake_uncond_exp_method="previous_average",
+                         cond_exp = less_clutter, cond_exp_sigma_start  = 9, cond_exp_sigma_end = uncond_sigma_start, cond_exp_method = "erf", cond_exp_normalize = True,
                          )[0]
         return (m, )
 
