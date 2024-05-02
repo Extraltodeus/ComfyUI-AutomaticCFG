@@ -500,7 +500,7 @@ class simpleDynamicCFGwarpDrive:
                                 "uncond_sigma_start": ("FLOAT", {"default": 5.5, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
                                 "uncond_sigma_end":   ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
                                 "fake_uncond_sigma_end": ("FLOAT", {"default": 1.0,  "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
-                                "less_clutter": ("BOOLEAN", {"default": True}),
+                                "less_clutter": ("BOOLEAN", {"default": False}),
                               }}
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
