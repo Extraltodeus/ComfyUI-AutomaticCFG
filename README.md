@@ -1,10 +1,9 @@
 My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much but it's honest work.
 
 ## Last update:
-
+- Allows unpatch `turn off the negative` by removing or disconnecting the node
 - added the "Warp drive" node. It uses a new method of my own cooking which uses the previous step to determin a negative. Cutting the generation time by half for approx 3/4 of the steps.
 - added example workflows with 10-12 steps but of course you can do more steps if needed. It is not a goal to do less steps in general but also to show it is compatible.
-
 
 # In short:
 
@@ -17,7 +16,7 @@ No more burns and 160% faster gens with the warp drive node.
 
 ### That's it!
 
-- The "boost" toggle will turn off the negative guidance when the sigmas are near 1. This doubles the inference speed. **To unpatch the function you have to start a batch with the toggle off.** Removing/disconnecting the node will not do it.
+- The "boost" toggle will turn off the negative guidance when the sigmas are near 1. This doubles the inference speed. ~~**To unpatch the function you have to start a batch with the toggle off.** Removing/disconnecting the node will not do it.~~
 - The negative strength lerp the cond and uncond. Now in normal times the way I do this would burn things to the ground. But since it is initialy an anti-burn it just works. This idea is inspired by the [negative prompt weight](https://github.com/muerrilla/stable-diffusion-NPW) repository.
 - I leave the advanced node for those who are interested. It will not be beneficial to those who do not feel like experimenting.
 
@@ -94,6 +93,10 @@ Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.
 - Actually working disabled uncond
 - Added "warp drive" preset to test it out simply.
 
+03.05.24
+
+- Allows unpatch `turn off the negative` by removing or disconnecting the node.
+
 # 10 steps with only 2 having the negative enabled. So ~170% faster. 2.5 seconds on a RTX4070
 
 ![03640UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/673cb47a-095f-4ebb-a186-2f6a49ffd2e1)
@@ -106,6 +109,3 @@ Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.
 ![03621UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/52695e1c-d28e-427f-9109-7ee4e4b3a5f6)
 
 ![03604UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/ca391b46-f587-43da-98da-a87e4982e4ed)
-
-
-
