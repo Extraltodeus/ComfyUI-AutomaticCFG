@@ -88,7 +88,7 @@ def get_denoised_ranges(latent, measure="hard", top_k=0.25):
     return chans
 
 def get_sigmin_sigmax(model):
-    model_sampling = model.model.model_sampling
+    model_sampling = model.get_model_object("model_sampling")
     sigmin = model_sampling.sigma(model_sampling.timestep(model_sampling.sigma_min))
     sigmax = model_sampling.sigma(model_sampling.timestep(model_sampling.sigma_max))
     return sigmin, sigmax
