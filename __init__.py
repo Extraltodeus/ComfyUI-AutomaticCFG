@@ -12,7 +12,7 @@ NODE_CLASS_MAPPINGS = {
     "Automatic CFG - Attention modifiers": attentionModifierParametersNode,
     "Automatic CFG - Attention modifiers tester": attentionModifierBruteforceParametersNode,
     "Automatic CFG - Unpatch function": simpleDynamicCFGunpatch,
-    "SAG delayed activation": SelfAttentionGuidanceCustom,
+    # "SAG delayed activation": SelfAttentionGuidanceCustom,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
