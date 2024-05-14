@@ -2,7 +2,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 
 ## Last update (14.05.24):
 - added node: **preset loader**. Can do what the other can and MUCH MORE! (note: mostly tested with SDXL, the "Red riding latent" preset does not work with SD1.5)). The presets are .json files and can contain a string which will go through eval(). Always check what is inside before running it.
-- added node: "**Excellent attention**" developped by myself and based on this [astonishingly easy to understand research paper!](https://github.com/Extraltodeus/temp/blob/main/ihave.jpg) But in short:
+- added node: "**Excellent attention**" developped by myself and based on this [astonishingly easy to understand research paper!](https://github.com/Extraltodeus/temp/blob/main/very_science.jpg) But in short:
    - This node allows to disable the input layer 8 on self and cross attention.
    - But also to apply a custom modification on cross attention middle layer 0.
    - While the modification is definitely not very ressource costy, the light patch uses less VRAM.
