@@ -909,7 +909,7 @@ class simpleDynamicCFGExcellentattentionPatch:
     RETURN_NAMES = ("Model", "Parameters as string",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches/automatic_cfg/presets"
+    CATEGORY = "model_patches/automatic_cfg"
 
     def patch(self, model, Auto_CFG, patch_multiplier, patch_cond, patch_uncond, light_patch,
               mute_self_input_layer_8_cond, mute_cross_input_layer_8_cond,
