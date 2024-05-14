@@ -93,21 +93,33 @@ def gaussian_blur_2d(img, kernel_size, sigma):
     img = F.conv2d(img, kernel2d, groups=img.shape[-3])
     return img
 
+def get_denoised_ranges(latent, measure="hard", top_k=0.25):
+    chans = []
+    for x in range(len(latent)):
+        max_values = torch.topk(latent[x] - latent[x].mean() if measure == "range" else latent[x], k=int(len(latent[x])*top_k), largest=True).values
+        min_values = torch.topk(latent[x] - latent[x].mean() if measure == "range" else latent[x], k=int(len(latent[x])*top_k), largest=False).values
+        max_val = torch.mean(max_values).item()
+        min_val = torch.mean(torch.abs(min_values)).item() if (measure == "hard" or measure == "range") else abs(torch.mean(min_values).item())
+        denoised_range = (max_val + min_val) / 2
+        chans.append(denoised_range)
+    return chans
+
 class SelfAttentionGuidanceCustom:
     @classmethod
     def INPUT_TYPES(s):
         return {"required": { "model": ("MODEL",),
-                             "scale": ("FLOAT", {"default": 0.5, "min": -2.0, "max": 5.0, "step": 0.1}),
+                             "scale": ("FLOAT", {"default": 0.5, "min": -2.0, "max": 100.0, "step": 0.1}),
                              "blur_sigma": ("FLOAT", {"default": 2.0, "min": 0.0, "max": 10.0, "step": 0.1}),
                              "sigma_start": ("FLOAT", {"default": 15.0, "min": 0.0, "max": 1000.0, "step": 0.1, "round": 0.1}),
                              "sigma_end": ("FLOAT", {"default": 0.0, "min": 0.0, "max": 1000.0, "step": 0.1, "round": 0.1}),
+                             "auto_scale" : ("BOOLEAN", {"default": False}),
                               }}
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
 
     CATEGORY = "model_patches"
 
-    def patch(self, model, scale, blur_sigma, sigma_start, sigma_end):
+    def patch(self, model, scale, blur_sigma, sigma_start, sigma_end, auto_scale):
         m = model.clone()
         
         attn_scores = None
@@ -145,7 +157,7 @@ class SelfAttentionGuidanceCustom:
             sigma = args["sigma"]
             model_options = args["model_options"]
             x = args["input"]
-            if not isinstance(uncond, torch.Tensor):
+            if uncond_pred is None or uncond is None or uncond_attn is None:
                 return cfg_result
             if min(cfg_result.shape[2:]) <= 4: #skip when too small to add padding
                 return cfg_result
@@ -157,6 +169,15 @@ class SelfAttentionGuidanceCustom:
             # call into the UNet
             (sag, _) = comfy.samplers.calc_cond_batch(model, [uncond, None], degraded_noised, sigma, model_options)
             # comfy.samplers.calc_cond_uncond_batch(model, uncond, None, degraded_noised, sigma, model_options)
+
+            if auto_scale:
+                denoised_tmp = cfg_result + (degraded - sag) * 8
+                for b in range(len(denoised_tmp)):
+                    denoised_ranges = get_denoised_ranges(denoised_tmp[b])
+                    for c in range(len(denoised_tmp[b])):
+                        fixed_scale = (sag_scale / 10) / denoised_ranges[c]
+                        denoised_tmp[b][c] = cfg_result[b][c] + (degraded[b][c] - sag[b][c]) * fixed_scale
+                return denoised_tmp
             
             return cfg_result + (degraded - sag) * sag_scale
 
