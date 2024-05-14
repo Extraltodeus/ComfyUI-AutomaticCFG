@@ -6,7 +6,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
    - This node allows to disable the input layer 8 on self and cross attention.
    - But also to apply a custom modification on cross attention middle layer 0.
    - While the modification is definitely not very ressource costy, the light patch uses less VRAM.
-   - The multiplier influences the cross attention and reinforces prompt-following. But like for real.
+   - The multiplier influences the cross attention and reinforces prompt-following. But like for real. Works better with the "light patch" toggle ON.
    - I have only tested it with SDXL.
    - You can find a grid example of this node's settings in the "grids_example" folder.
    - For some reason the Juggernaut model does not work with it and I have no idea why.
