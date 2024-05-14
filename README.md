@@ -8,11 +8,11 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 - If you want to use my latest model you can download it [HERE](https://www.patreon.com/posts/iris-lux-1051-104239837)! 😁
 - [Gallery of generated images with this latest update](https://www.patreon.com/posts/example-gallery-104245818).
 
-12 steps in one shot:
-
 ![12steps](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/b805b94a-a979-42f6-9114-6fc1cb30b63b)
 
+![01100UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/00d2f625-f617-496b-98d3-a57ecbc1c478)
 
+<sub>12 steps in one shot / 4.2 seconds for both images</sub>
 
 # In short:
 
