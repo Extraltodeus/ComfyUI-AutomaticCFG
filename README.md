@@ -1,6 +1,6 @@
 My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much but it's honest work.
 
-## Last update:
+## Last update (14.05.24):
 - added node: preset loader. Can do what the other can and MUCH MORE! (note: mostly tested with SDXL)
 - added node: "Excellent attention" developped by myself and based on this [astonishingly easy to understand research paper](https://github.com/Extraltodeus/temp/blob/main/ihave.jpg)! But in short This node allows to disable the input layer 8 on self and cross attention. But also to apply a custom modification on cross attention middle layer 0. I have only tested with SDXL. Also for some reason the Juggernaut model does not play too well with it. You can find a grid example of this node's settings in the "grids_example" folder.
 - Attention modifier presets! Try them with the preset loader!
