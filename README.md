@@ -20,7 +20,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 
 ![01100UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/00d2f625-f617-496b-98d3-a57ecbc1c478)
 
-<sub>12 steps in one shot / 4.2 seconds for both images</sub>
+<sub>12 steps in one shot / 4.2 seconds per image with an RTX4070</sub>
 
 
 # In short:
