@@ -1,13 +1,14 @@
 My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much but it's honest work.
 
 ## Last update:
-- Allows unpatch `turn off the negative` by removing or disconnecting the node
-- added the "Warp drive" node. It uses a new method of my own cooking which uses the previous step to determin a negative. Cutting the generation time by half for approx 3/4 of the steps.
-- added example workflows with 10-12 steps but of course you can do more steps if needed. It is not a goal to do less steps in general but also to show it is compatible.
+- Description to come
+- One preset loader to rule them all
 
 # In short:
 
 No more burns and 160% faster gens with the warp drive node.
+
+Customized sampling modifiers.
 
 # Usage:
 
@@ -96,6 +97,8 @@ Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.
 03.05.24
 
 - Allows unpatch `turn off the negative` by removing or disconnecting the node.
+- added the "Warp drive" node. It uses a new method of my own cooking which uses the previous step to determin a negative. Cutting the generation time by half for approx 3/4 of the steps.
+- added example workflows with 10-12 steps but of course you can do more steps if needed. It is not a goal to do less steps in general but also to show it is compatible.
 
 # 10 steps with only 2 having the negative enabled. So ~170% faster. 2.5 seconds on a RTX4070
 
