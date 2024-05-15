@@ -11,7 +11,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
         - There are a bunch of others. I've generated examples which you can find in the example grids folder.
     - Most of these have been tested on SDXL. I have very little idea of the effect on SD 1.5
     - The presets are .json files and can contain a string which will go through eval(). ⚠
-    - Always check what is inside before running it when it comes from someone else!
+    - Always check what is inside before running it when it comes from someone else! I hesitated to share a preset which would plan a shutdown in 60 seconds named "actually shut down the computer in one minute" to let you be aware but that would bother more than it would be helfpul.
 - added node: "**Excellent attention**" developped by myself and based on this [astonishingly easy to understand research paper!](https://github.com/Extraltodeus/temp/blob/main/very_science.jpg) But in short:
    - Just try it. [Do it](https://www.youtube.com/watch?v=ZXsQAXx_ao0).
    - This node allows to disable the input layer 8 on self and cross attention.
