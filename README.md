@@ -20,7 +20,6 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
    - You can find a grid example of this node's settings in the "grids_example" folder.
    - For some reason the Juggernaut model does not work with it and I have no idea why.
 - Attention modifier presets! Try them with the preset loader!
-- I discovered that disabling the input layer 8 on the cross or self attention tends to make more random images. This layer seems to be the main responsible for the overall composition while not being alone at the task. Disabling it for the self attention for generating the positive denoised is risky regarding the image coherence but tends to create more interesting images more driven by your prompt. For the cross attention it creates more coherent images with a bit less prompt following. The results are most interesting. Doing it in the negative seems to be an improvement. The only rule is to keep at least one of the attentions for the positive. You will find the possibility to do experiment about that through the presets loader and the "excellent attention" node.
   
 ### [If you want to use my latest model you can download it HERE!](https://www.patreon.com/posts/iris-lux-1051-104239837) 😊
 
