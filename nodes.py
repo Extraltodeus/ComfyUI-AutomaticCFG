@@ -221,7 +221,6 @@ def multi_tensor_check_mix(tensors):
         tensors[0][mask] = tensors[i][mask]
     return tensors[0]
 
-# I asked GPT-4 for a function to deal with the attention and it made this. It kinda sorta works.
 def normal_attention(q, k, v, mask=None):
     attention_scores = torch.matmul(q, k.transpose(-2, -1))
     d_k = k.size(-1)
