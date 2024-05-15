@@ -28,7 +28,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 
 <div align="center">
     
-### 😊 [Gallery of generated images with this latest update HERE!](https://www.patreon.com/posts/104245818) 😊
+### 😊 [Gallery of generated images and workflows with this latest update HERE!](https://www.patreon.com/posts/104245818) 😊
 
 </div>
 
