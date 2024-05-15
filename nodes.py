@@ -751,7 +751,7 @@ class presetLoader:
         return {"required": {
                                 "model": ("MODEL",),
                                 "preset" : (presets_files, {"default": "The red riding latent"}),
-                                "uncond_sigma_end":   ("FLOAT", {"default": 1, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
+                                "uncond_sigma_end":   ("FLOAT", {"default": 0.0, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
                                 "use_uncond_sigma_end_from_preset" : ("BOOLEAN", {"default": True}),
                               },
                               "optional":{
