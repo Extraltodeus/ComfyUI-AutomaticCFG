@@ -9,6 +9,7 @@ NODE_CLASS_MAPPINGS = {
     "Automatic CFG - Excellent attention": simpleDynamicCFGExcellentattentionPatch,
     "Automatic CFG - Advanced": advancedDynamicCFG,
     "Automatic CFG - Post rescale only": postCFGrescaleOnly,
+    "Automatic CFG - Custom attentions": simpleDynamicCFGCustomAttentionPatch,
     "Automatic CFG - Attention modifiers": attentionModifierParametersNode,
     "Automatic CFG - Attention modifiers tester": attentionModifierBruteforceParametersNode,
     "Automatic CFG - Unpatch function": simpleDynamicCFGunpatch,
