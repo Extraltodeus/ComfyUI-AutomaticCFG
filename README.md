@@ -1,6 +1,7 @@
 My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much but it's honest work.
 
 ## Last update (14.05.24):
+- temporarily disabled the timed PAG node because an update broke it.
 - added node: **preset loader**. Can do what the other can and much more! Mostly tested on SDXL and full of mathematical nonsense 😀!
     - About some of the presets:
         - "Enhanced_details_and_tweaked_attention" works better with 24 steps than 12 or on simple compositions.
