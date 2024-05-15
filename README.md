@@ -20,7 +20,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
    - You can find a grid example of this node's settings in the "grids_example" folder.
    - For some reason the Juggernaut model does not work with it and I have no idea why.
 - Customizable attention modifiers:
-     - Check the "attention_modifiers_explainations" in the workflows. 👀 It is basically a tutorial.
+     - Check the ["attention_modifiers_explainations"](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/blob/main/workflows/attention_modifiers_explainations.png) in the workflows. 👀 It is basically a tutorial.
      - Experiment what each layer really do by using what is basically a bruteforcing node! (the Attention modifiers tester node)
   
 ### 😊 [If you want to use my latest model you can download it HERE!](https://www.patreon.com/posts/iris-lux-1051-104239837) 😊
