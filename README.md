@@ -151,9 +151,5 @@ Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.
 
 -----
 
-The attention modifiers now allowing to test any modification makes it easy to experiment anything!
-
-![8q663x](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/2b54be78-a972-42c1-8c05-1a3310df0b56)
-
 Thanks to ComfyUI for existing and making such things so simple!
 
