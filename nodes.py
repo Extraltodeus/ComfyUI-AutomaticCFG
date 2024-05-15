@@ -750,7 +750,7 @@ class presetLoader:
         presets_files = sorted(presets_files, key=str.lower)
         return {"required": {
                                 "model": ("MODEL",),
-                                "preset" : (presets_files, {"default": "The red riding latent"}),
+                                "preset" : (presets_files, {"default": "Excellent_attention"}),
                                 "uncond_sigma_end":   ("FLOAT", {"default": 0.0, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
                                 "use_uncond_sigma_end_from_preset" : ("BOOLEAN", {"default": True}),
                               },
