@@ -23,7 +23,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 - Customizable attention modifiers:
      - Check the ["attention_modifiers_explainations"](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/blob/main/workflows/attention_modifiers_explainations.png) in the workflows. 👀 It is basically a tutorial.
      - Experiment what each layer really do by using what is basically a bruteforcing node! (the Attention modifiers tester node)
-     - [This is how you do a Perturbed Attention Guidance for example](https://github.com/Extraltodeus/temp/blob/main/PAG.png)
+     - This is how you do a [Perturbed Attention Guidance](https://github.com/Extraltodeus/temp/blob/main/PAG.png) for example
   
 ### 😊 [If you want to use my latest model you can download it HERE!](https://www.patreon.com/posts/iris-lux-1051-104239837) 😊
 
