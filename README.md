@@ -147,3 +147,11 @@ Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.
 ![03621UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/52695e1c-d28e-427f-9109-7ee4e4b3a5f6)
 
 ![03604UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/ca391b46-f587-43da-98da-a87e4982e4ed)
+
+
+-----
+
+![8q663x](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/2b54be78-a972-42c1-8c05-1a3310df0b56)
+
+Thanks to ComfyUI for existing and making such things so simple!
+
