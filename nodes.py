@@ -2,7 +2,7 @@ import math
 from copy import deepcopy
 from torch.nn import Upsample
 from comfy.model_patcher import set_model_options_patch_replace
-from comfy.ldm.modules.attention import attention_basic
+from comfy.ldm.modules.attention import attention_basic, attention_xformers, attention_pytorch, attention_split, attention_sub_quad
 import comfy.samplers
 import comfy.utils
 import numpy as np
@@ -246,11 +246,21 @@ class attention_modifier():
     def __init__(self, self_attn_mod_eval, conds = None):
         self.self_attn_mod_eval = self_attn_mod_eval
         self.conds = conds
+
     def modified_attention(self, q, k, v, extra_options, mask=None):
         if "attnbc" in self.self_attn_mod_eval:
             attnbc = attention_basic(q, k, v, extra_options['n_heads'], mask)
         if "normattn" in self.self_attn_mod_eval:
-            normattn = normal_attention(q, k, v, mask)
+            normattn = normal_attention(q, k, v, extra_options['n_heads'], mask)
+        if "attnxf" in self.self_attn_mod_eval:
+            attnxf = attention_xformers(q, k, v, extra_options['n_heads'], mask)
+        if "attnpy" in self.self_attn_mod_eval:
+            attnpy = attention_pytorch(q, k, v, extra_options['n_heads'], mask)
+        if "attnsp" in self.self_attn_mod_eval:
+            attnsp = attention_split(q, k, v, extra_options['n_heads'], mask)
+        if "attnsq" in self.self_attn_mod_eval:
+            attnsq = attention_sub_quad(q, k, v, extra_options['n_heads'], mask)
+
         if self.conds is not None:
             cond_pos_l = self.conds[0][..., :768].cuda()
             cond_neg_l = self.conds[1][..., :768].cuda()
@@ -759,6 +769,8 @@ class presetLoader:
         if not use_uncond_sigma_end_from_preset:
             preset_args["uncond_sigma_end"] = uncond_sigma_end
             preset_args["fake_uncond_sigma_end"] = uncond_sigma_end
+            preset_args["fake_uncond_exp_sigma_end"] = uncond_sigma_end
+            preset_args["uncond_exp_sigma_end"] = uncond_sigma_end            
         
         if join_global_parameters is not None:
             preset_args["attention_modifiers_global"] = preset_args["attention_modifiers_global"] + join_global_parameters
