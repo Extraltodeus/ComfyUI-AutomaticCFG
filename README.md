@@ -13,7 +13,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
     - Always check what is inside before running it when it comes from someone else!
 - added node: "**Excellent attention**" developped by myself and based on this [astonishingly easy to understand research paper!](https://github.com/Extraltodeus/temp/blob/main/very_science.jpg) But in short:
    - This node allows to disable the input layer 8 on self and cross attention.
-   - But also to apply a custom modification on cross attention middle layer 0. the "patch_cond" and "patch_uncond" toggles are about this modification.
+   - But also to apply a custom modification on cross attention middle layer 0. The "patch_cond" and "patch_uncond" toggles are about this modification.
    - While the modification is definitely not very ressource costy, the light patch uses less VRAM.
    - The multiplier influences the cross attention and reinforces prompt-following. But like for real. Works better with the "light patch" toggle ON.
    - I have only tested it with SDXL.
