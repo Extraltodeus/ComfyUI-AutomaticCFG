@@ -3,6 +3,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 ## Last update (14.05.24):
 - added node: **preset loader**. Can do what the other can and much more!
     - About some of the presets:
+        - "Fixed_attention_all_layers": Just try it. [Do it](https://www.youtube.com/watch?v=ZXsQAXx_ao0).
         - "Enhanced_details_and_tweaked_attention" works better with 24 steps than 12 or on simple compositions.
         - "The red riding latent" only works with SDXL. It is an almost nonsensical mix of attention tweaks. Best with 12 steps and really nice with creative prompts. Has the tendency to give more red clothings to the characters. Hence the name.
         - "Excellent_attention" is the default settings for the node described below. Don't delete it or the node won't work.
