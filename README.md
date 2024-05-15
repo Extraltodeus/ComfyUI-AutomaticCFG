@@ -3,7 +3,6 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 ## Last update (14.05.24):
 - added node: **preset loader**. Can do what the other can and much more! Mostly tested on SDXL and full of mathematical nonsense 😀!
     - About some of the presets:
-        - "Awesome_attention": Just try it. [Do it](https://www.youtube.com/watch?v=ZXsQAXx_ao0).
         - "Enhanced_details_and_tweaked_attention" works better with 24 steps than 12 or on simple compositions.
         - "The red riding latent" only works with SDXL. It is an almost nonsensical mix of attention tweaks. Best with 12 steps and really nice with creative prompts. Has the tendency to give more red clothings to the characters. Hence the name.
         - "Excellent_attention" is the default settings for the node described below. Don't delete it or the node won't work.
@@ -13,6 +12,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
     - The presets are .json files and can contain a string which will go through eval(). ⚠
     - Always check what is inside before running it when it comes from someone else!
 - added node: "**Excellent attention**" developped by myself and based on this [astonishingly easy to understand research paper!](https://github.com/Extraltodeus/temp/blob/main/very_science.jpg) But in short:
+   - Just try it. [Do it](https://www.youtube.com/watch?v=ZXsQAXx_ao0).
    - This node allows to disable the input layer 8 on self and cross attention.
    - But also to apply a custom modification on cross attention middle layer 0. The "patch_cond" and "patch_uncond" toggles are about this modification.
    - While the modification is definitely not very ressource costy, the light patch uses less VRAM.
