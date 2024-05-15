@@ -9,7 +9,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
         - "Potato Attention Guidance" is really nice for portraits of happy people...
         - There are a bunch of others. I've generated examples which you can find in the example grids folder.
     - Most of these have been tested on SDXL. I have very little idea of the effect on SD 1.5
-    - The presets are .json files and can contain a string which will go through eval().
+    - The presets are .json files and can contain a string which will go through eval(). ⚠
     - Always check what is inside before running it when it comes from someone else!
 - added node: "**Excellent attention**" developped by myself and based on this [astonishingly easy to understand research paper!](https://github.com/Extraltodeus/temp/blob/main/very_science.jpg) But in short:
    - This node allows to disable the input layer 8 on self and cross attention.
@@ -19,9 +19,11 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
    - I have ~~only~~ mostly tested it with SDXL.
    - You can find a grid example of this node's settings in the "grids_example" folder.
    - For some reason the Juggernaut model does not work with it and I have no idea why.
-- Attention modifier presets! Try them with the preset loader!
+- Customizable attention modifiers:
+     - Check the "attention_modifiers_explainations" in the workflows. 👀 It is basically a tutorial.
+     - Experiment what each layer really do by using what is basically a bruteforcing node! (the Attention modifiers tester node)
   
-### [If you want to use my latest model you can download it HERE!](https://www.patreon.com/posts/iris-lux-1051-104239837) 😊
+### 😊 [If you want to use my latest model you can download it HERE!](https://www.patreon.com/posts/iris-lux-1051-104239837) 😊
 
 ### [Gallery](https://www.patreon.com/posts/example-gallery-104245818) of generated images with this latest update.
 
