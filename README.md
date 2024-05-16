@@ -8,7 +8,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
     - About some of the presets:
         - For SD 1.5 "crossed conds customized 3" seems amazing!
         - "Enhanced_details_and_tweaked_attention" works better with 24 steps than 12 or on simple compositions but gives amazing results for creative generations. I mean just don't expect "a crowd of backflipping clowns showing their hands" to work but "dark enchanted forest with colorful glowing lights, digital painting, night, wintery fog, fantasy" will definitely yield better results!
-        - "Reinforced_style" does not regulates the CFG, works with 12 steps and is slightly slower. Test with nightly street photography.
+        - "Reinforced_style" does not regulates the CFG, gives MUCH MORE importance to your negative prompt, works with 12 steps and is slightly slower.
         - "The red riding latent" only works with SDXL. It is an almost nonsensical mix of attention tweaks. Best with 12 steps and really nice with creative prompts. Has the tendency to give more red clothings to the characters. Hence the name.
         - "Excellent_attention" is the default settings for the node described below. Don't delete it or the node won't work. 🙃
         - "Potato Attention Guidance" is really nice for portraits of happy people...
