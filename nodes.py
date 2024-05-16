@@ -1,8 +1,9 @@
 import math
 from copy import deepcopy
 from torch.nn import Upsample
+import comfy.model_management as model_management
 from comfy.model_patcher import set_model_options_patch_replace
-from comfy.ldm.modules.attention import attention_basic, attention_xformers, attention_pytorch, attention_split, attention_sub_quad
+from comfy.ldm.modules.attention import attention_basic, attention_xformers, attention_pytorch, attention_split, attention_sub_quad, optimized_attention_for_device
 import comfy.samplers
 import comfy.utils
 import numpy as np
@@ -14,15 +15,17 @@ import os
 
 original_sampling_function = None
 current_dir = os.path.dirname(os.path.realpath(__file__))
-json_preset_path   = os.path.join(current_dir, 'presets')
+json_preset_path = os.path.join(current_dir, 'presets')
+attnfunc = optimized_attention_for_device(model_management.get_torch_device())
 
 def sampling_function_patched(model, x, timestep, uncond, cond, cond_scale, model_options={}, seed=None, **kwargs):
+
+    cond_copy   = cond
+    uncond_copy = uncond
+
     for fn in model_options.get("sampler_patch_model_pre_cfg_function", []):
         args = {"model": model, "sigma": timestep, "model_options": model_options}
         model, model_options = fn(args)
-    
-    cond_copy   = deepcopy(cond)
-    uncond_copy = deepcopy(uncond)
 
     if "sampler_pre_cfg_function" in model_options:
         uncond, cond, cond_scale = model_options["sampler_pre_cfg_function"](
@@ -48,10 +51,10 @@ def sampling_function_patched(model, x, timestep, uncond, cond, cond_scale, mode
         cfg_result = uncond_pred + (cond_pred - uncond_pred) * cond_scale
 
     for fn in model_options.get("sampler_post_cfg_function", []):
-        args = {"denoised": cfg_result, "cond": cond, "uncond": uncond_copy, "model": model, "uncond_denoised": uncond_pred, "cond_denoised": cond_pred,
+        args = {"denoised": cfg_result, "cond": cond_copy, "uncond": uncond_copy, "model": model, "uncond_denoised": uncond_pred, "cond_denoised": cond_pred,
                 "sigma": timestep, "model_options": model_options, "input": x}
         cfg_result = fn(args)
-
+        
     return cfg_result
 
 
@@ -156,9 +159,6 @@ def smallest_distances(tensors):
         result[mask] = t1[mask]
     return result
 
-# def rescale(h,downscale_factor=2,downscale_method="bicubic"):
-#     return comfy.utils.common_upscale(h, round(h.shape[-1] * (1.0 / downscale_factor)), round(h.shape[-2] * (1.0 / downscale_factor)), downscale_method, "disabled")
-
 def rescale(tensor, multiplier=2):
     batch, seq_length, features = tensor.shape
     H = W = int(seq_length**0.5)
@@ -248,10 +248,15 @@ class attention_modifier():
         self.conds = conds
 
     def modified_attention(self, q, k, v, extra_options, mask=None):
+        
+        """{'cond_or_uncond': [1, 0], 'sigmas': tensor([14.6146], device='cuda:0'),
+         'original_shape': [2, 4, 128, 128], 'transformer_index': 4, 'block': ('middle', 0),
+         'block_index': 3, 'n_heads': 20, 'dim_head': 64, 'attn_precision': None}"""
+        
         if "attnbc" in self.self_attn_mod_eval:
             attnbc = attention_basic(q, k, v, extra_options['n_heads'], mask)
         if "normattn" in self.self_attn_mod_eval:
-            normattn = normal_attention(q, k, v, extra_options['n_heads'], mask)
+            normattn = normal_attention(q, k, v, mask)
         if "attnxf" in self.self_attn_mod_eval:
             attnxf = attention_xformers(q, k, v, extra_options['n_heads'], mask)
         if "attnpy" in self.self_attn_mod_eval:
@@ -260,7 +265,9 @@ class attention_modifier():
             attnsp = attention_split(q, k, v, extra_options['n_heads'], mask)
         if "attnsq" in self.self_attn_mod_eval:
             attnsq = attention_sub_quad(q, k, v, extra_options['n_heads'], mask)
-
+        if "attnopt" in self.self_attn_mod_eval:
+            attnopt = attnfunc(q, k, v, extra_options['n_heads'], mask)
+        
         if self.conds is not None:
             cond_pos_l = self.conds[0][..., :768].cuda()
             cond_neg_l = self.conds[1][..., :768].cuda()
@@ -400,7 +407,8 @@ def experimental_functions(cond_input, method, exp_value, exp_normalize, pcp, ps
 class advancedDynamicCFG:
     def __init__(self):
         self.last_cfg_ht_one = 8
-
+        self.previous_cond_pred = None
+        
     @classmethod
     def INPUT_TYPES(s):
         return {"required": {
@@ -537,15 +545,15 @@ class advancedDynamicCFG:
         previous_cond_pred = None
         previous_sigma = None
         def automatic_cfg_function(args):
-            nonlocal previous_cond_pred, previous_sigma
+            nonlocal previous_sigma
             cond_scale = args["cond_scale"]
             input_x = args["input"]
             cond_pred = args["cond_denoised"]
             uncond_pred = args["uncond_denoised"]
             sigma = args["sigma"][0]
             model_options = args["model_options"]
-            if previous_cond_pred is None:
-                previous_cond_pred = deepcopy(cond_pred)
+            if self.previous_cond_pred is None:
+                self.previous_cond_pred = cond_pred.clone().detach().to(device=cond_pred.device)
             if previous_sigma is None:
                 previous_sigma = sigma.item()
             reference_cfg = auto_cfg_ref if auto_cfg_ref > 0 else cond_scale
@@ -554,15 +562,15 @@ class advancedDynamicCFG:
                 return fake_uncond_start and skip_uncond and (sigma > uncond_sigma_start or sigma < uncond_sigma_end) and sigma <= fake_uncond_sigma_start and sigma >= fake_uncond_sigma_end
 
             if fake_uncond_step():
-                uncond_pred = cond_pred.clone() * fake_uncond_multiplier
+                uncond_pred = cond_pred.clone().detach().to(device=cond_pred.device) * fake_uncond_multiplier
 
             if cond_exp and sigma <= cond_exp_sigma_start and sigma >= cond_exp_sigma_end:
-                cond_pred = experimental_functions(cond_pred, cond_exp_method, cond_exp_value, cond_exp_normalize, previous_cond_pred, previous_sigma, sigma.item(), sigmax, attention_modifiers_positive, args, model_options_copy, eval_string_cond)
+                cond_pred = experimental_functions(cond_pred, cond_exp_method, cond_exp_value, cond_exp_normalize, self.previous_cond_pred, previous_sigma, sigma.item(), sigmax, attention_modifiers_positive, args, model_options_copy, eval_string_cond)
             if uncond_exp and sigma <= uncond_exp_sigma_start and sigma >= uncond_exp_sigma_end and not fake_uncond_step():
-                uncond_pred = experimental_functions(uncond_pred, uncond_exp_method, uncond_exp_value, uncond_exp_normalize, previous_cond_pred, previous_sigma, sigma.item(), sigmax, attention_modifiers_negative, args, model_options_copy, eval_string_uncond)
+                uncond_pred = experimental_functions(uncond_pred, uncond_exp_method, uncond_exp_value, uncond_exp_normalize, self.previous_cond_pred, previous_sigma, sigma.item(), sigmax, attention_modifiers_negative, args, model_options_copy, eval_string_uncond)
             if fake_uncond_step() and fake_uncond_exp:
-                uncond_pred = experimental_functions(uncond_pred, fake_uncond_exp_method, fake_uncond_exp_value, fake_uncond_exp_normalize, previous_cond_pred, previous_sigma, sigma.item(), sigmax, attention_modifiers_fake_negative, args, model_options_copy, eval_string_fake)
-            previous_cond_pred = deepcopy(cond_pred)
+                uncond_pred = experimental_functions(uncond_pred, fake_uncond_exp_method, fake_uncond_exp_value, fake_uncond_exp_normalize, self.previous_cond_pred, previous_sigma, sigma.item(), sigmax, attention_modifiers_fake_negative, args, model_options_copy, eval_string_fake)
+            self.previous_cond_pred = cond_pred.clone().detach().to(device=cond_pred.device)
 
             if sigma >= sigmax or cond_scale > 1:
                 self.last_cfg_ht_one = cond_scale
@@ -906,7 +914,7 @@ class simpleDynamicCFGExcellentattentionPatch:
         return {"required": {
                                 "model": ("MODEL",),
                                 "Auto_CFG": ("BOOLEAN", {"default": True}),
-                                "patch_multiplier": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 100.0, "step": 1.0, "round": 0.01}),
+                                "patch_multiplier": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 100.0, "step": 0.1, "round": 0.01}),
                                 "patch_cond":   ("BOOLEAN", {"default": True}),
                                 "patch_uncond": ("BOOLEAN", {"default": True}),
                                 "light_patch":  ("BOOLEAN", {"default": False}),
@@ -971,7 +979,7 @@ class simpleDynamicCFGExcellentattentionPatch:
         patch_parameters["uncond_sigma_end"]      = uncond_sigma_end
         patch_parameters["fake_uncond_sigma_end"] = uncond_sigma_end
         patch_parameters["automatic_cfg"] = "hard" if Auto_CFG else "None"
-        
+
         advcfg = advancedDynamicCFG()
         m = advcfg.patch(model, **patch_parameters)[0]
         
