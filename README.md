@@ -2,8 +2,8 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 
 ## Last update (14.05.24):
 - temporarily disabled the timed SAG node because an update broke it.
-- added node: **preset loader**. Can do what the other can and much more! Mostly tested on SDXL 😀!
-    - Some presets are slower than others. Just like the perturbed attention guidance for example.
+- added node: **preset loader**. Can do what the other can and much more like modify the attention mechanisms! Mostly tested on SDXL 😀!
+    - Some presets are slower than others. Just like for the perturbed attention guidance for example. Most are just as fast.
     - About some of the presets:
         - For SD 1.5 "crossed conds customized 3" seems amazing!
         - "Enhanced_details_and_tweaked_attention" works better with 24 steps than 12 or on simple compositions but gives amazing results for creative generations. I mean just don't expect "a crowd of backflipping clowns showing their hands" to work but "dark enchanted forest with colorful glowing lights, digital painting, night, wintery fog, fantasy" will definitely yield better results!
