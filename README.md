@@ -1,6 +1,7 @@
 My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much but it's honest work.
 
 ## Last update (14.05.24):
+- fix the little mem leak 😀
 - temporarily disabled the timed SAG node because an update broke it.
 - added node: **preset loader**. Can do what the other can and much more like modify the attention mechanisms! Mostly tested on SDXL 😀!
     - Some presets are slower than others. Just like for the perturbed attention guidance for example. Most are just as fast.
