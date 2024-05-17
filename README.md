@@ -1,5 +1,12 @@
 My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much but it's honest work.
 
+# In short:
+
+No more burns and 160% faster gens with the warp drive node.
+
+Now includes custom attention modifiers and interesting presets.
+
+
 ## Last update (14.05.24):
 - fix the little mem leak 😀
 - temporarily disabled the timed SAG node because an update broke it.
@@ -42,10 +49,6 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 
 <sub>12 steps in one shot / 4.2 seconds per image / using the "Excellent_attention" patch.</sub>
 
-
-# In short:
-
-No more burns and 160% faster gens with the warp drive node.
 
 Customized attention modifiers.
 
