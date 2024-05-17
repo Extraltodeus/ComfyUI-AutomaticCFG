@@ -1,3 +1,7 @@
 It's here:
 
 https://github.com/Extraltodeus/temp/blob/main/image_PIL_text.py
+
+Also you will need to create a folder named "fonts" in your main ComfyUI folder and add at least one.
+Roboto is nice:
+https://fonts.google.com/specimen/Roboto
