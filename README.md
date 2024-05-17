@@ -50,8 +50,6 @@ Now includes custom attention modifiers and interesting presets.
 <sub>12 steps in one shot / 4.2 seconds per image / using the "Excellent_attention" patch.</sub>
 
 
-Customized attention modifiers.
-
 # Usage:
 
 ![77889aa6-a2f6-48bf-8cde-17c9cbfda5fa](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/c725a06c-8966-43de-ab1c-569e2ff5b151)
