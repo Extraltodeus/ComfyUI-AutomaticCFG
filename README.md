@@ -97,7 +97,7 @@ Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.
 - added the "Warp drive" node. It uses a new method of my own cooking which uses the previous step to determin a negative. Cutting the generation time by half for approx 3/4 of the steps.
 - added example workflows with 10-12 steps but of course you can do more steps if needed. It is not a goal to do less steps in general but also to show it is compatible.
 
-## Last update (14.05.24):
+14.05.24:
 - fix the little mem leak 😀
 - temporarily disabled the timed SAG node because an update broke it.
 - added node: **preset loader**. Can do what the other can and much more like modify the attention mechanisms! Mostly tested on SDXL 😀!
@@ -139,11 +139,13 @@ Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.
 
 <sub>12 steps in one shot / 4.2 seconds per image / using the "Excellent_attention" patch.</sub>
 
-# 10 steps with only 2 having the negative enabled. So ~170% faster. 2.5 seconds on a RTX4070
+# Examples
+
+### 10 steps with only 2 having the negative enabled. So ~170% faster. 2.5 seconds on a RTX4070
 
 ![03640UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/673cb47a-095f-4ebb-a186-2f6a49ffd2e1)
 
-# cherry-picked 24 steps uncond fully disabled (these images are also workflows):
+### cherry-picked 24 steps uncond fully disabled (these images are also workflows):
 
 
 ![03619UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/19ee6edc-b039-4472-9ec2-c08ea15dd908)
