@@ -1,4 +1,5 @@
 from .nodes import *
+from .experimental_temperature import ExperimentalTemperaturePatchSDXL,ExperimentalTemperaturePatchSD15
 # from .nodes_sag_custom import * 
 
 NODE_CLASS_MAPPINGS = {
@@ -13,6 +14,8 @@ NODE_CLASS_MAPPINGS = {
     "Automatic CFG - Attention modifiers": attentionModifierParametersNode,
     "Automatic CFG - Attention modifiers tester": attentionModifierBruteforceParametersNode,
     "Automatic CFG - Unpatch function": simpleDynamicCFGunpatch,
+    "Temperature settings SDXL": ExperimentalTemperaturePatchSDXL,
+    "Temperature settings SD 1.5": ExperimentalTemperaturePatchSD15,
     # "SAG delayed activation": SelfAttentionGuidanceCustom,
 }
 
