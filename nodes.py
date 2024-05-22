@@ -12,11 +12,20 @@ import torch.nn.functional as F
 from colorama import Fore, Style
 import json
 import os
+import random
+import base64
 
 original_sampling_function = None
 current_dir = os.path.dirname(os.path.realpath(__file__))
 json_preset_path = os.path.join(current_dir, 'presets')
 attnfunc = optimized_attention_for_device(model_management.get_torch_device())
+check_string   = "UEFUUkVPTi50eHQ="
+support_string = b'CgoKClRoYW5rIHlvdSBmb3IgdXNpbmcgbXkgbm9kZXMhCgpJZiB5b3UgZW5qb3kgaXQsIHBsZWFzZSBjb25zaWRlciBzdXBwb3J0aW5nIG1lIG9uIFBhdHJlb24gdG8ga2VlcCB0aGUgbWFnaWMgZ29pbmchCgpWaXNpdDoKCmh0dHBzOi8vd3d3LnBhdHJlb24uY29tL2V4dHJhbHRvZGV1cwoKCgo='
+
+def support_function():
+    if base64.b64decode(check_string).decode('utf8') not in os.listdir(current_dir):
+        print(base64.b64decode(check_string).decode('utf8'))
+        print(base64.b64decode(support_string).decode('utf8'))
 
 def sampling_function_patched(model, x, timestep, uncond, cond, cond_scale, model_options={}, seed=None, **kwargs):
 
@@ -56,7 +65,6 @@ def sampling_function_patched(model, x, timestep, uncond, cond, cond_scale, mode
         cfg_result = fn(args)
         
     return cfg_result
-
 
 def monkey_patching_comfy_sampling_function():
     global original_sampling_function
@@ -128,20 +136,21 @@ def max_abs(tensors):
     result = tensors[max_abs_idx, torch.arange(tensors.shape[1])]
     return result.reshape(shape[1:])
 
-def gaussian_kernel(size, sigma):
-    ax = torch.arange(-size // 2 + 1., size // 2 + 1.)
-    xx, yy = torch.meshgrid(ax, ax, indexing='ij')
-    kernel = torch.exp(-(xx**2 + yy**2) / (2. * sigma**2))
-    return kernel / kernel.sum()
+def gaussian_kernel(size: int, sigma: float):
+    x = torch.arange(size) - size // 2
+    gauss = torch.exp(-x**2 / (2 * sigma**2))
+    kernel = gauss / gauss.sum()
+    return kernel.view(1, size) * kernel.view(size, 1)
 
-def blur_tensor(input_tensor, kernel_size = 7, sigma = 2.0):
-    device = input_tensor.device
-    x_coord = torch.arange(kernel_size) - (kernel_size - 1) / 2
-    xy_grid = torch.square(x_coord.repeat(kernel_size).view(kernel_size, kernel_size)) + torch.square(x_coord.repeat(kernel_size).view(kernel_size, kernel_size).t())
-    gaussian_kernel = torch.exp(-xy_grid / (2 * sigma ** 2)) / torch.sum(torch.exp(-xy_grid / (2 * sigma ** 2)))
-    gaussian_kernel = gaussian_kernel.to(device).to(input_tensor.dtype)
-    gaussian_kernel = gaussian_kernel.view(1, 1, kernel_size, kernel_size).repeat(1, 1, 1, 1)
-    return F.conv2d(input_tensor.unsqueeze(0), gaussian_kernel, padding=int(kernel_size/2), groups=1).squeeze(0).to(device).to(input_tensor.dtype)
+def blur_tensor(tensor, kernel_size = 9, sigma = 2.0):
+    tensor = tensor.unsqueeze(0)
+    C = tensor.size(1)
+    kernel = gaussian_kernel(kernel_size, sigma)
+    kernel = kernel.expand(C, 1, kernel_size, kernel_size).to(tensor.device).to(dtype=tensor.dtype, device=tensor.device)
+    padding = kernel_size // 2
+    tensor = F.pad(tensor, (padding, padding, padding, padding), mode='reflect')
+    blurred_tensor = F.conv2d(tensor, kernel, groups=C)
+    return blurred_tensor.squeeze(0)
 
 def smallest_distances(tensors):
     if all(torch.equal(tensors[0], tensor) for tensor in tensors[1:]):
@@ -221,6 +230,37 @@ def multi_tensor_check_mix(tensors):
         tensors[0][mask] = tensors[i][mask]
     return tensors[0]
 
+def sspow(input_tensor, p=2):
+    return input_tensor.abs().pow(p) * input_tensor.sign()
+
+def sspown(input_tensor, p=2):
+    abs_t = input_tensor.abs()
+    abs_t = (abs_t - abs_t.min()) / (abs_t.max() - abs_t.min())
+    return abs_t.pow(p) * input_tensor.sign()
+
+def gradient_merge(tensor1, tensor2, start_value=0, dim=0):
+    if torch.numel(tensor1) <= 1: return tensor1
+    if dim >= tensor1.dim(): dim = 0
+    size = tensor1.size(dim)
+    alpha = torch.linspace(start_value, 1-start_value, steps=size, device=tensor1.device).view([-1 if i == dim else 1 for i in range(tensor1.dim())])
+    return tensor1 * alpha + tensor2 * (1 - alpha)
+
+def save_tensor(input_tensor,name):
+    if "rndnum" in name:
+        rndnum = str(random.randint(100000,999999))
+        name = name.replace("rndnum", rndnum)
+    output_directory = os.path.join(current_dir, 'saved_tensors')
+    os.makedirs(output_directory, exist_ok=True)
+    output_file_path = os.path.join(output_directory, f"{name}.pt")
+    torch.save(input_tensor, output_file_path)
+    return input_tensor
+
+def print_and_return(input_tensor, *args):
+    for what_to_print in args:
+        print(" ",what_to_print)
+    return input_tensor
+
+# Experimental testings
 def normal_attention(q, k, v, mask=None):
     attention_scores = torch.matmul(q, k.transpose(-2, -1))
     d_k = k.size(-1)
@@ -231,17 +271,46 @@ def normal_attention(q, k, v, mask=None):
     output = torch.matmul(attention_weights, v)
     return output
 
-def sspow(input_tensor, p=2):
-    return input_tensor.abs().pow(p) * input_tensor.sign()
+def split_heads(x, n_heads):
+    batch_size, seq_length, hidden_dim = x.size()
+    head_dim = hidden_dim // n_heads
+    x = x.view(batch_size, seq_length, n_heads, head_dim)
+    return x.permute(0, 2, 1, 3)
 
-def gradient_merge(tensor1, tensor2, start_value=0, dim=0):
-    if torch.numel(tensor1) <= 1: return tensor1
-    if dim >= tensor1.dim(): dim = 0
-    size = tensor1.size(dim)
-    alpha = torch.linspace(start_value, 1-start_value, steps=size, device=tensor1.device).view([-1 if i == dim else 1 for i in range(tensor1.dim())])
-    return tensor1 * alpha + tensor2 * (1 - alpha)
+def combine_heads(x, n_heads):
+    batch_size, n_heads, seq_length, head_dim = x.size()
+    hidden_dim = n_heads * head_dim
+    x = x.permute(0, 2, 1, 3).contiguous()
+    return x.view(batch_size, seq_length, hidden_dim)
 
-# eval() results share pointers and would therefore apply the same formula to all layers.
+def sparsemax(logits):
+    logits_sorted, _ = torch.sort(logits, descending=True, dim=-1)
+    cumulative_sum = torch.cumsum(logits_sorted, dim=-1) - 1
+    rho = (logits_sorted > cumulative_sum / (torch.arange(logits.size(-1)) + 1).to(logits.device)).float()
+    tau = (cumulative_sum / rho.sum(dim=-1, keepdim=True)).gather(dim=-1, index=rho.sum(dim=-1, keepdim=True).long() - 1)
+    return torch.max(torch.zeros_like(logits), logits - tau)
+
+def attnfunc_custom(q, k, v, n_heads, eval_string = ""):
+    q = split_heads(q, n_heads)
+    k = split_heads(k, n_heads)
+    v = split_heads(v, n_heads)
+    
+    d_k = q.size(-1)
+
+    scores = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(d_k)
+
+    if eval_string == "":
+        attn_weights = F.softmax(scores, dim=-1)
+    else:
+        attn_weights = eval(eval_string)
+
+    output = torch.matmul(attn_weights, v)
+    output = combine_heads(output, n_heads)
+    return output
+
+def min_max_norm(t):
+    return (t - t.min()) / (t.max() - t.min())
+
 class attention_modifier():
     def __init__(self, self_attn_mod_eval, conds = None):
         self.self_attn_mod_eval = self_attn_mod_eval
@@ -249,7 +318,7 @@ class attention_modifier():
 
     def modified_attention(self, q, k, v, extra_options, mask=None):
         
-        """{'cond_or_uncond': [1, 0], 'sigmas': tensor([14.6146], device='cuda:0'),
+        """extra_options contains: {'cond_or_uncond': [1, 0], 'sigmas': tensor([14.6146], device='cuda:0'),
          'original_shape': [2, 4, 128, 128], 'transformer_index': 4, 'block': ('middle', 0),
          'block_index': 3, 'n_heads': 20, 'dim_head': 64, 'attn_precision': None}"""
         
@@ -267,7 +336,7 @@ class attention_modifier():
             attnsq = attention_sub_quad(q, k, v, extra_options['n_heads'], mask)
         if "attnopt" in self.self_attn_mod_eval:
             attnopt = attnfunc(q, k, v, extra_options['n_heads'], mask)
-        
+        n_heads = extra_options['n_heads']
         if self.conds is not None:
             cond_pos_l = self.conds[0][..., :768].cuda()
             cond_neg_l = self.conds[1][..., :768].cuda()
@@ -487,7 +556,7 @@ class advancedDynamicCFG:
     RETURN_TYPES = ("MODEL","STRING",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches/automatic_cfg"
+    CATEGORY = "model_patches/Automatic_CFG"
 
     def patch(self, model, automatic_cfg = "None",
               skip_uncond = False, fake_uncond_start = False, uncond_sigma_start = 1000, uncond_sigma_end = 0,
@@ -505,6 +574,7 @@ class advancedDynamicCFG:
               disable_cond=False, disable_cond_sigma_start=1000,disable_cond_sigma_end=1000, save_as_preset = False, preset_name = "", **kwargs
               ):
         
+        support_function()
         model_options_copy = deepcopy(model.model_options)
         monkey_patching_comfy_sampling_function()
         if args_filter != "":
@@ -514,7 +584,7 @@ class advancedDynamicCFG:
         not_in_filter = ['self','model','args','args_filter','save_as_preset','preset_name','model_options_copy']
         if fake_uncond_exp_method != "eval":
             not_in_filter.append("eval_string")
-        
+
         if save_as_preset and preset_name != "":
             preset_parameters = {key: value for key, value in locals().items() if key not in not_in_filter}
             with open(os.path.join(json_preset_path, preset_name+".json"), 'w', encoding='utf-8') as f:
@@ -623,7 +693,7 @@ class advancedDynamicCFG:
         
         tmp_model_options = deepcopy(m.model_options)
         if attention_modifiers_global_enabled:
-            print(f"{Fore.GREEN}Sigma timings are ignored for global modifiers.{Fore.RESET}")
+            # print(f"{Fore.GREEN}Sigma timings are ignored for global modifiers.{Fore.RESET}")
             for atm in attention_modifiers_global:
                 block_layers = {"input": atm['unet_block_id_input'], "middle": atm['unet_block_id_middle'], "output": atm['unet_block_id_output']}
                 for unet_block in block_layers:
@@ -651,7 +721,7 @@ class attentionModifierParametersNode:
                                 "unet_block_id_input":  ("STRING", {"multiline": False}, {"default": ""}),
                                 "unet_block_id_middle": ("STRING", {"multiline": False}, {"default": ""}),
                                 "unet_block_id_output": ("STRING", {"multiline": False}, {"default": ""}),
-                                "unet_attn": (["attn1","attn2"],),
+                                "unet_attn": (["attn1","attn2","both"],),
                               },
                               "optional":{
                                   "join_parameters": ("ATTNMOD", {"forceInput": True}),
@@ -660,10 +730,17 @@ class attentionModifierParametersNode:
     RETURN_TYPES = ("ATTNMOD","STRING",)
     RETURN_NAMES = ("Attention modifier", "Parameters as string")
     FUNCTION = "exec"
-    CATEGORY = "model_patches/automatic_cfg/experimental_attention_modifiers"
+    CATEGORY = "model_patches/Automatic_CFG/experimental_attention_modifiers"
     def exec(self, join_parameters=None, **kwargs):
         info_string = "\n".join([f"{k}: {v}" for k,v in kwargs.items() if v != ""])
-        return ([kwargs] if join_parameters is None else join_parameters + [kwargs], info_string, )
+        if kwargs['unet_attn'] == "both":
+            copy_kwargs = kwargs.copy()
+            kwargs['unet_attn'] = "attn1"
+            copy_kwargs['unet_attn'] = "attn2"
+            out_modifiers = [kwargs, copy_kwargs]
+        else:
+            out_modifiers = [kwargs]
+        return (out_modifiers if join_parameters is None else join_parameters + out_modifiers, info_string, )
 
 class attentionModifierBruteforceParametersNode:
     @classmethod
@@ -676,7 +753,7 @@ class attentionModifierBruteforceParametersNode:
                                 "unet_block_id_input":  ("STRING", {"multiline": False, "default": "4,5,7,8"}),
                                 "unet_block_id_middle": ("STRING", {"multiline": False, "default": "0"}),
                                 "unet_block_id_output": ("STRING", {"multiline": False, "default": "0,1,2,3,4,5"}),
-                                "unet_attn": (["attn1","attn2"],),
+                                "unet_attn": (["attn1","attn2","both"],),
                               },
                               "optional":{
                                   "join_parameters": ("ATTNMOD", {"forceInput": True}),
@@ -685,7 +762,7 @@ class attentionModifierBruteforceParametersNode:
     RETURN_TYPES = ("ATTNMOD","STRING",)
     RETURN_NAMES = ("Attention modifier", "Parameters as string")
     FUNCTION = "exec"
-    CATEGORY = "model_patches/automatic_cfg/experimental_attention_modifiers"
+    CATEGORY = "model_patches/Automatic_CFG/experimental_attention_modifiers"
 
     def create_sequence_parameters(self, input_str, middle_str, output_str):
         input_values  = input_str.split(",")  if input_str  else []
@@ -712,7 +789,14 @@ class attentionModifierBruteforceParametersNode:
         elif current_sequence["unet_block_id_output"] != "":
             current_block_string = f"unet_block_id_output: {current_sequence['unet_block_id_output']}"
         info_string = f"Progress: {current_index+1}/{lenseq}\n{kwargs['self_attn_mod_eval']}\n{kwargs['unet_attn']} {current_block_string}"
-        return ([kwargs] if join_parameters is None else join_parameters + [kwargs], info_string, )
+        if kwargs['unet_attn'] == "both":
+            copy_kwargs = kwargs.copy()
+            kwargs['unet_attn'] = "attn1"
+            copy_kwargs['unet_attn'] = "attn2"
+            out_modifiers = [kwargs, copy_kwargs]
+        else:
+            out_modifiers = [kwargs]
+        return (out_modifiers if join_parameters is None else join_parameters + out_modifiers, info_string, )
     
 class attentionModifierConcatNode:
     @classmethod
@@ -724,7 +808,7 @@ class attentionModifierConcatNode:
     
     RETURN_TYPES = ("ATTNMOD",)
     FUNCTION = "exec"
-    CATEGORY = "model_patches/automatic_cfg/experimental_attention_modifiers"
+    CATEGORY = "model_patches/Automatic_CFG/experimental_attention_modifiers"
     def exec(self, parameters_1, parameters_2):
         output_parms = parameters_1 + parameters_2
         return (output_parms, )
@@ -740,7 +824,7 @@ class simpleDynamicCFG:
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches/automatic_cfg/presets"
+    CATEGORY = "model_patches/Automatic_CFG/presets"
 
     def patch(self, model, hard_mode, boost):
         advcfg = advancedDynamicCFG()
@@ -754,13 +838,14 @@ class simpleDynamicCFG:
 class presetLoader:
     @classmethod
     def INPUT_TYPES(s):
-        presets_files = [pj.replace(".json","") for pj in os.listdir(json_preset_path) if ".json" in pj and "do_not_delete" not in pj]
+        presets_files = [pj.replace(".json","") for pj in os.listdir(json_preset_path) if ".json" in pj and pj not in ["Experimental_temperature.json","do_not_delete.json"]]
         presets_files = sorted(presets_files, key=str.lower)
         return {"required": {
                                 "model": ("MODEL",),
                                 "preset" : (presets_files, {"default": "Excellent_attention"}),
                                 "uncond_sigma_end":   ("FLOAT", {"default": 0.0, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
                                 "use_uncond_sigma_end_from_preset" : ("BOOLEAN", {"default": True}),
+                                "automatic_cfg" : (["From preset","None", "soft", "hard", "hard_squared", "range"],),
                               },
                               "optional":{
                                   "join_global_parameters": ("ATTNMOD", {"forceInput": True}),
@@ -769,9 +854,9 @@ class presetLoader:
     RETURN_NAMES = ("Model", "Preset name", "Parameters as string",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches/automatic_cfg"
+    CATEGORY = "model_patches/Automatic_CFG"
 
-    def patch(self, model, preset, uncond_sigma_end, use_uncond_sigma_end_from_preset, join_global_parameters=None):
+    def patch(self, model, preset, uncond_sigma_end, use_uncond_sigma_end_from_preset, automatic_cfg, join_global_parameters=None):
         with open(os.path.join(json_preset_path, preset+".json"), 'r', encoding='utf-8') as f:
             preset_args = json.load(f)
         if not use_uncond_sigma_end_from_preset:
@@ -784,6 +869,9 @@ class presetLoader:
             preset_args["attention_modifiers_global"] = preset_args["attention_modifiers_global"] + join_global_parameters
             preset_args["attention_modifiers_global_enabled"] = True
 
+        if automatic_cfg != "From preset":
+            preset_args["automatic_cfg"] = automatic_cfg
+        
         advcfg = advancedDynamicCFG()
         m = advcfg.patch(model, **preset_args)[0]
         info_string = "\n".join([f"{k}: {v}" for k,v in preset_args.items() if v != ""])
@@ -801,7 +889,7 @@ class simpleDynamicCFGlerpUncond:
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches/automatic_cfg/presets"
+    CATEGORY = "model_patches/Automatic_CFG/presets"
 
     def patch(self, model, boost, negative_strength):
         advcfg = advancedDynamicCFG()
@@ -830,7 +918,7 @@ class postCFGrescaleOnly:
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches/automatic_cfg/utils"
+    CATEGORY = "model_patches/Automatic_CFG/utils"
 
     def patch(self, model,
               subtract_latent_mean, subtract_latent_mean_sigma_start, subtract_latent_mean_sigma_end,
@@ -855,7 +943,7 @@ class simpleDynamicCFGHighSpeed:
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches/automatic_cfg/presets"
+    CATEGORY = "model_patches/Automatic_CFG/presets"
 
     def patch(self, model):
         advcfg = advancedDynamicCFG()
@@ -875,7 +963,7 @@ class simpleDynamicCFGwarpDrive:
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches/automatic_cfg/presets"
+    CATEGORY = "model_patches/Automatic_CFG/presets"
 
     def patch(self, model, uncond_sigma_start, uncond_sigma_end, fake_uncond_sigma_end):
         advcfg = advancedDynamicCFG()
@@ -901,7 +989,7 @@ class simpleDynamicCFGunpatch:
     RETURN_TYPES = ("MODEL",)
     FUNCTION = "unpatch"
 
-    CATEGORY = "model_patches/automatic_cfg/utils"
+    CATEGORY = "model_patches/Automatic_CFG/utils"
 
     def unpatch(self, model):
         m = model.clone()
@@ -911,29 +999,42 @@ class simpleDynamicCFGunpatch:
 class simpleDynamicCFGExcellentattentionPatch:
     @classmethod
     def INPUT_TYPES(s):
-        return {"required": {
-                                "model": ("MODEL",),
-                                "Auto_CFG": ("BOOLEAN", {"default": True}),
-                                "patch_multiplier": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 100.0, "step": 0.1, "round": 0.01}),
-                                "patch_cond":   ("BOOLEAN", {"default": True}),
-                                "patch_uncond": ("BOOLEAN", {"default": True}),
-                                "light_patch":  ("BOOLEAN", {"default": False}),
-                                "mute_self_input_layer_8_cond":    ("BOOLEAN", {"default": False}),
-                                "mute_cross_input_layer_8_cond":   ("BOOLEAN", {"default": False}),
-                                "mute_self_input_layer_8_uncond":  ("BOOLEAN", {"default": True}),
-                                "mute_cross_input_layer_8_uncond": ("BOOLEAN", {"default": False}),
-                                "uncond_sigma_end": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
-                              }}
+        inputs = {"required": {
+                        "model": ("MODEL",),
+                        "Auto_CFG": ("BOOLEAN", {"default": True}),
+                        "patch_multiplier": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 100.0, "step": 1.0, "round": 0.01}),
+                        "patch_cond":   ("BOOLEAN", {"default": True}),
+                        "patch_uncond": ("BOOLEAN", {"default": True}),
+                        "light_patch":  ("BOOLEAN", {"default": False}),
+                        "mute_self_input_layer_8_cond":    ("BOOLEAN", {"default": False}),
+                        "mute_cross_input_layer_8_cond":   ("BOOLEAN", {"default": False}),
+                        "mute_self_input_layer_8_uncond":  ("BOOLEAN", {"default": True}),
+                        "mute_cross_input_layer_8_uncond": ("BOOLEAN", {"default": False}),
+                        "uncond_sigma_end": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
+                        "bypass_layer_8_instead_of_mute": ("BOOLEAN", {"default": False}),
+                        "save_as_preset": ("BOOLEAN", {"default": False}),
+                        "preset_name":    ("STRING",  {"multiline": False}),
+                        },
+                        "optional":{
+                                "attn_mod_for_positive_operation": ("ATTNMOD", {"forceInput": True}),
+                                "attn_mod_for_negative_operation": ("ATTNMOD", {"forceInput": True}),
+                        },
+                    }
+        if "dev_env.txt" in os.listdir(current_dir):
+            inputs['optional'].update({"attn_mod_for_global_operation": ("ATTNMOD", {"forceInput": True})})
+        return inputs
+    
     RETURN_TYPES = ("MODEL","STRING",)
     RETURN_NAMES = ("Model", "Parameters as string",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches/automatic_cfg"
+    CATEGORY = "model_patches/Automatic_CFG"
 
     def patch(self, model, Auto_CFG, patch_multiplier, patch_cond, patch_uncond, light_patch,
               mute_self_input_layer_8_cond, mute_cross_input_layer_8_cond,
               mute_self_input_layer_8_uncond, mute_cross_input_layer_8_uncond,
-              uncond_sigma_end):
+              uncond_sigma_end,bypass_layer_8_instead_of_mute, save_as_preset, preset_name,
+              attn_mod_for_positive_operation = None, attn_mod_for_negative_operation = None, attn_mod_for_global_operation = None):
         
         parameters_as_string = "Excellent attention:\n" + "\n".join([f"{k}: {v}" for k, v in locals().items() if k not in ["self", "model"]])
         
@@ -946,22 +1047,18 @@ class simpleDynamicCFGExcellentattentionPatch:
         attn_patch_light = {"sigma_start": 1000, "sigma_end": 0,
                        "self_attn_mod_eval": f"q*{patch_multiplier}",
                        "unet_block_id_input": "", "unet_block_id_middle": "0", "unet_block_id_output": "", "unet_attn": "attn2"}
+
         kill_self_input_8 = {
             "sigma_start": 1000,
             "sigma_end": 0,
-            "self_attn_mod_eval": "torch.zeros_like(q)",
+            "self_attn_mod_eval": "q" if bypass_layer_8_instead_of_mute else "torch.zeros_like(q)",
             "unet_block_id_input": "8",
             "unet_block_id_middle": "",
             "unet_block_id_output": "",
             "unet_attn": "attn1"}
-        kill_cross_input_8 = {
-            "sigma_start": 1000,
-            "sigma_end": 0,
-            "self_attn_mod_eval": "torch.zeros_like(q)",
-            "unet_block_id_input": "8",
-            "unet_block_id_middle": "",
-            "unet_block_id_output": "",
-            "unet_attn": "attn2"}
+        
+        kill_cross_input_8 = kill_self_input_8.copy()
+        kill_cross_input_8['unet_attn'] = "attn2"
         
         attention_modifiers_positive = []
         attention_modifiers_fake_negative = []
@@ -976,9 +1073,22 @@ class simpleDynamicCFGExcellentattentionPatch:
 
         patch_parameters['attention_modifiers_positive']      = attention_modifiers_positive
         patch_parameters['attention_modifiers_fake_negative'] = attention_modifiers_fake_negative
+
+        if attn_mod_for_positive_operation is not None:
+            patch_parameters['attention_modifiers_positive'] = patch_parameters['attention_modifiers_positive'] + attn_mod_for_positive_operation
+        if attn_mod_for_negative_operation is not None:
+            patch_parameters['attention_modifiers_fake_negative'] = patch_parameters['attention_modifiers_fake_negative'] + attn_mod_for_negative_operation
+        if attn_mod_for_global_operation is not None:
+            patch_parameters["attention_modifiers_global_enabled"] = True
+            patch_parameters['attention_modifiers_global'] = attn_mod_for_global_operation
+
         patch_parameters["uncond_sigma_end"]      = uncond_sigma_end
         patch_parameters["fake_uncond_sigma_end"] = uncond_sigma_end
         patch_parameters["automatic_cfg"] = "hard" if Auto_CFG else "None"
+
+        if save_as_preset:
+            patch_parameters["save_as_preset"] = save_as_preset
+            patch_parameters["preset_name"] = preset_name
 
         advcfg = advancedDynamicCFG()
         m = advcfg.patch(model, **patch_parameters)[0]
@@ -1007,7 +1117,7 @@ class simpleDynamicCFGCustomAttentionPatch:
     RETURN_NAMES = ("Model",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches/automatic_cfg/experimental_attention_modifiers"
+    CATEGORY = "model_patches/Automatic_CFG/experimental_attention_modifiers"
 
     def patch(self, model, Auto_CFG, cond_mode, uncond_mode, cond_diff_multiplier, uncond_diff_multiplier, uncond_sigma_end, save_as_preset, preset_name,
               attn_mod_for_positive_operation = [], attn_mod_for_negative_operation = []):
