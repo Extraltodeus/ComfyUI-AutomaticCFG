@@ -2,9 +2,10 @@
 
 -   T E M P E R A T U R E   S E T T I N G S   (experimental):
    - Added two experimental temperature settings nodes for SD 1.5 and SDXL
-   - They are standalone and compatible with my other nodes. Except maybe with a very few presets which can patch layers and I wouldn't be able to tell which 😇. But if you're using my nodes for the automatic CFG functionnality then you're definitely good. The warp drive node is 100% compatible too.
+   - They are standalone and compatible with my other nodes. It is better to connect them before any other auto-cfg node.
    - Here is how you can plug them: ![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/0d01d55f-a2ff-4926-bed8-1f790463b4cf)
    - If you want to set different values for different layers and different attentions you can simply chain them.
+   
 
 # In short:
 
