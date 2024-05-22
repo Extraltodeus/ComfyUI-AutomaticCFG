@@ -78,7 +78,8 @@ class ExperimentalTemperaturePatch:
     def INPUT_TYPES(s):
         required_inputs = {f"{key}_{layer}": ("BOOLEAN", {"default": False}) for key, layers in s.TOGGLES.items() for layer in layers}
         required_inputs["model"] = ("MODEL",)
-        required_inputs["Temperature"] = ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.1, "round": 0.01})
+        required_inputs["Temperature"] = ("FLOAT", {"default": 1.0, "min": 0.01, "max": 10.0, "step": 0.01, "round": 0.01})
+        required_inputs["Attention"]   = (["both","self","cross"],)
         return {"required": required_inputs}
     
     TOGGLES = {}
@@ -88,12 +89,15 @@ class ExperimentalTemperaturePatch:
 
     CATEGORY = "model_patches/Automatic_CFG"
 
-    def patch(self, model, Temperature, **kwargs):
+    def patch(self, model, Temperature, Attention, **kwargs):
         m = model.clone()
         for key, toggle_enabled in kwargs.items():
             if key.split("_")[0] in ["input","middle","output"] and toggle_enabled:
                 patcher = temperature_patcher(Temperature)
-                m.set_model_attn1_replace(patcher.attention_basic_with_temperature, key.split("_")[0], int(key.split("_")[1]))
+                if Attention in ["both","self"]:
+                    m.set_model_attn1_replace(patcher.attention_basic_with_temperature, key.split("_")[0], int(key.split("_")[1]))
+                if Attention in ["both","cross"]:
+                    m.set_model_attn2_replace(patcher.attention_basic_with_temperature, key.split("_")[0], int(key.split("_")[1]))
         return (m, )
     
 ExperimentalTemperaturePatchSDXL = type("ExperimentalTemperaturePatch_SDXL", (ExperimentalTemperaturePatch,), {"TOGGLES": layers_SDXL})
