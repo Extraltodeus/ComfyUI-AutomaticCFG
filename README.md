@@ -19,7 +19,7 @@ My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much
 
 No more burns and 160% faster gens with the warp drive node.
 
-Now includes custom attention modifiers and interesting presets.
+Now includes custom attention modifiers and interesting presets as well as temperature scaling.
 
 
 # Usage:
