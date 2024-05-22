@@ -7,6 +7,12 @@
    - If you want to set different values for different layers and different attentions you can simply chain them.
    
 
+
+https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/4cbdc670-5e6c-435c-9f39-66f910dfed13
+
+
+
+
 # In short:
 
 My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much but it's honest work.
