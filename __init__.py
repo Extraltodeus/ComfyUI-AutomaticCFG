@@ -17,6 +17,7 @@ NODE_CLASS_MAPPINGS = {
     "Temperature settings SDXL": ExperimentalTemperaturePatchSDXL,
     "Temperature settings SD 1.5": ExperimentalTemperaturePatchSD15,
     "Temperature settings CLIP": CLIPTemperaturePatch,
+    "Temperature settings CLIP Dual": CLIPTemperaturePatchDual,
     # "SAG delayed activation": SelfAttentionGuidanceCustom,
 }
 
