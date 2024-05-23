@@ -5,14 +5,17 @@ import torch.nn.functional as F
 import math
 from comfy import model_management
 import types
+import os
 
 def exists(val):
-    return val is not None
+    return val is not None       
 
+abs_mean = lambda x: torch.where(torch.isnan(x) | torch.isinf(x), torch.zeros_like(x), x).abs().mean()
 
 class temperature_patcher():
-    def __init__(self, temperature):
+    def __init__(self, temperature, layer_name="None"):
         self.temperature = temperature
+        self.layer_name  = layer_name
     
     # taken from comfy.ldm.modules
     def attention_basic_with_temperature(self, q, k, v, extra_options, mask=None, attn_precision=None):
@@ -56,9 +59,9 @@ class temperature_patcher():
                     bs = mask.shape[0]
                 mask = mask.reshape(bs, -1, mask.shape[-2], mask.shape[-1]).expand(b, heads, -1, -1).reshape(-1, mask.shape[-2], mask.shape[-1])
                 sim.add_(mask)
-        
+
         # attention, what we cannot get enough of
-        sim = sim.div(self.temperature).softmax(dim=-1)
+        sim = sim.div(self.temperature if self.temperature > 0 else abs_mean(sim)).softmax(dim=-1)
 
         out = einsum('b i j, b j d -> b i d', sim.to(v.dtype), v)
         out = (
@@ -86,7 +89,7 @@ class ExperimentalTemperaturePatch:
     def INPUT_TYPES(s):
         required_inputs = {f"{key}_{layer}": ("BOOLEAN", {"default": False}) for key, layers in s.TOGGLES.items() for layer in layers}
         required_inputs["model"] = ("MODEL",)
-        required_inputs["Temperature"]  = ("FLOAT", {"default": 1.0, "min": 0.01, "max": 10.0, "step": 0.01, "round": 0.01})
+        required_inputs["Temperature"]  = ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.01, "round": 0.01})
         required_inputs["Attention"]    = (["both","self","cross"],)
         return {"required": required_inputs}
     
@@ -106,7 +109,7 @@ class ExperimentalTemperaturePatch:
             if current_level in levels and toggle_enabled:
                 b_number = int(key.split("_")[1])
                 parameters_output[current_level].append(b_number)
-                patcher = temperature_patcher(Temperature)
+                patcher = temperature_patcher(Temperature,key)
 
                 if Attention in ["both","self"]:
                     m.set_model_attn1_replace(patcher.attention_basic_with_temperature, current_level, b_number)
@@ -157,5 +160,48 @@ class CLIPTemperaturePatch:
         if getattr(m.cond_stage_model, f"clip_g", None) is not None:
             clip_encoder_instance_g = m.cond_stage_model.clip_g.transformer.text_model.encoder
             clip_encoder_instance_g.forward = types.MethodType(new_forward, clip_encoder_instance_g)
+        
+        return (m,)
+
+class CLIPTemperaturePatchDual:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {"required": { "clip": ("CLIP",),
+                              "Temperature": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.01}),
+                              "CLIP_Model": (["clip_g","clip_l","both"],),
+                              }}
+    
+    RETURN_TYPES = ("CLIP",)
+    FUNCTION = "patch"
+    CATEGORY = "model_patches/Automatic_CFG/Standalone_temperature_patches"
+    
+    def patch(self, clip, Temperature, CLIP_Model):
+        def custom_optimized_attention(device, mask=None, small_input=True):
+            return temperature_patcher(Temperature, "CLIP").attention_basic_with_temperature
+        
+        def new_forward(self, x, mask=None, intermediate_output=None):
+            optimized_attention = custom_optimized_attention(x.device, mask=mask is not None, small_input=True)
+
+            if intermediate_output is not None:
+                if intermediate_output < 0:
+                    intermediate_output = len(self.layers) + intermediate_output
+
+            intermediate = None
+            for i, l in enumerate(self.layers):
+                x = l(x, mask, optimized_attention)
+                if i == intermediate_output:
+                    intermediate = x.clone()
+            return x, intermediate
+
+        m = clip.clone()
+
+        if CLIP_Model in ["clip_l","both"]:
+            clip_encoder_instance = m.cond_stage_model.clip_l.transformer.text_model.encoder
+            clip_encoder_instance.forward = types.MethodType(new_forward, clip_encoder_instance)
+
+        if CLIP_Model in ["clip_g","both"]:
+            if getattr(m.cond_stage_model, f"clip_g", None) is not None:
+                clip_encoder_instance_g = m.cond_stage_model.clip_g.transformer.text_model.encoder
+                clip_encoder_instance_g.forward = types.MethodType(new_forward, clip_encoder_instance_g)
         
         return (m,)

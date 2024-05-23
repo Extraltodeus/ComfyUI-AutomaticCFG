@@ -875,7 +875,7 @@ class presetLoader:
         
         advcfg = advancedDynamicCFG()
         m = advcfg.patch(model, **preset_args)[0]
-        info_string = "\n".join([f"{k}: {v}" for k,v in preset_args.items() if v != ""])
+        info_string = ",\n".join([f"\"{k}\": {v}" for k,v in preset_args.items() if v != ""])
         print(f"Preset {Fore.GREEN}{preset}{Fore.RESET} loaded successfully!")
         return (m, preset, info_string,)
 
@@ -1172,3 +1172,89 @@ class simpleDynamicCFGCustomAttentionPatch:
         m = advcfg.patch(model, **patch_parameters)[0]
         
         return (m, )
+
+
+
+
+class attentionModifierSingleLayerBypassNode:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {
+                                "sigma_start": ("FLOAT", {"default": 1000, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
+                                "sigma_end":   ("FLOAT", {"default":  0, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
+                                "block_name":  (["input","middle","output"],),
+                                "block_number": ("INT", {"default": 0, "min": 0, "max": 12, "step": 1}),
+                                "unet_attn": (["attn1","attn2","both"],),
+                              },
+                              "optional":{
+                                  "join_parameters": ("ATTNMOD", {"forceInput": True}),
+                              }}
+    
+    RETURN_TYPES = ("ATTNMOD","STRING",)
+    RETURN_NAMES = ("Attention modifier", "Parameters as string")
+    FUNCTION = "exec"
+    CATEGORY = "model_patches/Automatic_CFG/experimental_attention_modifiers"
+
+    def exec(self, sigma_start, sigma_end, block_name, block_number, unet_attn, join_parameters=None):
+        attn_modifier_dict = {
+        "sigma_start": sigma_start, "sigma_end": sigma_end,
+         "self_attn_mod_eval": "q",
+         "unet_block_id_input":  str(block_number) if block_name == "input" else "",
+         "unet_block_id_middle": str(block_number) if block_name == "middle" else "",
+         "unet_block_id_output": str(block_number) if block_name == "output" else "",
+         "unet_attn": f"{unet_attn}"
+         }
+
+        info_string = "\n".join([f"{k}: {v}" for k,v in attn_modifier_dict.items() if v != ""])
+
+        if unet_attn == "both":
+            attn_modifier_dict['unet_attn'] = "attn1"
+            copy_attn_modifier_dict = attn_modifier_dict.copy()
+            copy_attn_modifier_dict['unet_attn'] = "attn2"
+            out_modifiers = [attn_modifier_dict, copy_attn_modifier_dict]
+        else:
+            out_modifiers = [attn_modifier_dict]
+
+        return (out_modifiers if join_parameters is None else join_parameters + out_modifiers, info_string, )
+
+class attentionModifierSingleLayerTemperatureNode:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {
+                                "sigma_start": ("FLOAT", {"default": 1000, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
+                                "sigma_end":   ("FLOAT", {"default":  0, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
+                                "block_name":  (["input","middle","output"],),
+                                "block_number": ("INT", {"default": 0, "min": 0, "max": 12, "step": 1}),
+                                "unet_attn": (["attn1","attn2","both"],),
+                                "temperature": ("FLOAT", {"default":  1, "min": 0.0, "max": 10000.0, "step": 0.01, "round": 0.01}),
+                              },
+                              "optional":{
+                                  "join_parameters": ("ATTNMOD", {"forceInput": True}),
+                              }}
+    
+    RETURN_TYPES = ("ATTNMOD","STRING",)
+    RETURN_NAMES = ("Attention modifier", "Parameters as string")
+    FUNCTION = "exec"
+    CATEGORY = "model_patches/Automatic_CFG/experimental_attention_modifiers"
+
+    def exec(self, sigma_start, sigma_end, block_name, block_number, unet_attn, temperature, join_parameters=None):
+        attn_modifier_dict = {
+        "sigma_start": sigma_start, "sigma_end": sigma_end,
+         "self_attn_mod_eval": f"temperature_patcher({temperature}).attention_basic_with_temperature(q, k, v, extra_options)",
+         "unet_block_id_input":  str(block_number) if block_name == "input" else "",
+         "unet_block_id_middle": str(block_number) if block_name == "middle" else "",
+         "unet_block_id_output": str(block_number) if block_name == "output" else "",
+         "unet_attn": f"{unet_attn}"
+         }
+
+        info_string = "\n".join([f"{k}: {v}" for k,v in attn_modifier_dict.items() if v != ""])
+
+        if unet_attn == "both":
+            attn_modifier_dict['unet_attn'] = "attn1"
+            copy_attn_modifier_dict = attn_modifier_dict.copy()
+            copy_attn_modifier_dict['unet_attn'] = "attn2"
+            out_modifiers = [attn_modifier_dict, copy_attn_modifier_dict]
+        else:
+            out_modifiers = [attn_modifier_dict]
+
+        return (out_modifiers if join_parameters is None else join_parameters + out_modifiers, info_string, )
