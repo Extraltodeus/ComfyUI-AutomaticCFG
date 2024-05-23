@@ -16,6 +16,7 @@ NODE_CLASS_MAPPINGS = {
     "Automatic CFG - Unpatch function": simpleDynamicCFGunpatch,
     "Temperature settings SDXL": ExperimentalTemperaturePatchSDXL,
     "Temperature settings SD 1.5": ExperimentalTemperaturePatchSD15,
+    "Temperature settings CLIP": CLIPTemperaturePatch,
     # "SAG delayed activation": SelfAttentionGuidanceCustom,
 }
 
