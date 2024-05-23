@@ -95,7 +95,7 @@ class ExperimentalTemperaturePatch:
     RETURN_NAMES = ("Model","String",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches/Automatic_CFG"
+    CATEGORY = "model_patches/Standalone_temperature_patches/Automatic_CFG"
 
     def patch(self, model, Temperature, Attention, **kwargs):
         m = model.clone()
@@ -129,7 +129,7 @@ class CLIPTemperaturePatch:
     
     RETURN_TYPES = ("CLIP",)
     FUNCTION = "merge"
-    CATEGORY = "model_patches/Automatic_CFG"
+    CATEGORY = "model_patches/Standalone_temperature_patches/Automatic_CFG"
     
     def patch(self, clip, Temperature):
         def custom_optimized_attention(device, mask=None, small_input=True):
@@ -153,7 +153,7 @@ class CLIPTemperaturePatch:
 
         clip_encoder_instance = m.cond_stage_model.clip_l.transformer.text_model.encoder
         clip_encoder_instance.forward = types.MethodType(new_forward, clip_encoder_instance)
-        
+
         if getattr(m.cond_stage_model, f"clip_g", None) is not None:
             clip_encoder_instance_g = m.cond_stage_model.clip_g.transformer.text_model.encoder
             clip_encoder_instance_g.forward = types.MethodType(new_forward, clip_encoder_instance_g)
