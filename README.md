@@ -40,7 +40,7 @@
 ![142](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/60f2622e-6a99-434a-b887-d531b71370e7)
 
 
-## SDXL Unet temperature variation
+## SDXL Unet temperature variation (interpolated with Flowframes)
 
 https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/4cbdc670-5e6c-435c-9f39-66f910dfed13
 
