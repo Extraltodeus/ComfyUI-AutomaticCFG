@@ -8,6 +8,9 @@
    - Added also a CLIP temperature patch.
    - ![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/8c8c930e-8079-41f5-9996-14779ef1f7dd)
    - THE CLIP PATCH IGNORES THE CONNECTION and is linked to the model in memory. Set the temperature at 1 to set it to normal or use a second loader / reload the model.
+   - Interesting overall discoveries:
+        - At least with SDXL, bypassing the input layer 8 while generating the uncond makes the images cleaner. Make it return the query rather than the result of the attention function and the uncond stops messing around with the composition. It does however raises the brightness if an anti-burn is not used (but you're in luck since that was the initial goal of this repository). This side effect is absolutely unnoticeable with the auto-cfg set on "hard".
+   - Scaling the attention scores with a temperature on the CLIP model is easy to implement and beneficial.
 
 
 
