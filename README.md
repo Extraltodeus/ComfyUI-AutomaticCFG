@@ -1,6 +1,6 @@
 # Latest update (22.05.24):
 
--   T E M P E R A T U R E   S E T T I N G S   (experimental):
+-   T E M P E R A T U R E   S E T T I N G S  for the CLIP and the UNET!
    - Added two experimental temperature settings nodes for SD 1.5 and SDXL
    - They are standalone and compatible with my other nodes. It is better to connect them before any other auto-cfg node.
    - Here is how you can plug them: ![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/0d01d55f-a2ff-4926-bed8-1f790463b4cf)
