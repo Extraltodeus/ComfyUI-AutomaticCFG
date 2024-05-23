@@ -128,7 +128,7 @@ class CLIPTemperaturePatch:
                               }}
     
     RETURN_TYPES = ("CLIP",)
-    FUNCTION = "merge"
+    FUNCTION = "patch"
     CATEGORY = "model_patches/Automatic_CFG/Standalone_temperature_patches"
     
     def patch(self, clip, Temperature):
