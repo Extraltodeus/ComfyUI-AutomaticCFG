@@ -12,7 +12,7 @@
         - At least with SDXL, bypassing the input layer 8 while generating the uncond makes the images cleaner. Make it return the query rather than the result of the attention function and the uncond stops messing around with the composition. It does however raises the brightness if an anti-burn is not used (but you're in luck since that was the initial goal of this repository). This side effect is absolutely unnoticeable with the auto-cfg set on "hard".
    - Scaling the attention scores with a temperature on the CLIP model is easy to implement and beneficial.
 
-
+![11737UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/e6d763b9-548b-4b3e-b992-e9e37fc91c6d)
 
 https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/4cbdc670-5e6c-435c-9f39-66f910dfed13
 
