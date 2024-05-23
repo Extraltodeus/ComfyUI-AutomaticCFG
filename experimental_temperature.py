@@ -95,7 +95,7 @@ class ExperimentalTemperaturePatch:
     RETURN_NAMES = ("Model","String",)
     FUNCTION = "patch"
 
-    CATEGORY = "model_patches/Standalone_temperature_patches/Automatic_CFG"
+    CATEGORY = "model_patches/Automatic_CFG/Standalone_temperature_patches"
 
     def patch(self, model, Temperature, Attention, **kwargs):
         m = model.clone()
@@ -129,7 +129,7 @@ class CLIPTemperaturePatch:
     
     RETURN_TYPES = ("CLIP",)
     FUNCTION = "merge"
-    CATEGORY = "model_patches/Standalone_temperature_patches/Automatic_CFG"
+    CATEGORY = "model_patches/Automatic_CFG/Standalone_temperature_patches"
     
     def patch(self, clip, Temperature):
         def custom_optimized_attention(device, mask=None, small_input=True):
