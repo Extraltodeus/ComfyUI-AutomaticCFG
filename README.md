@@ -12,11 +12,37 @@
         - At least with SDXL, bypassing the input layer 8 while generating the uncond makes the images cleaner. Make it return the query rather than the result of the attention function and the uncond stops messing around with the composition. It does however raises the brightness if an anti-burn is not used (but you're in luck since that was the initial goal of this repository). This side effect is absolutely unnoticeable with the auto-cfg set on "hard".
    - Scaling the attention scores with a temperature on the CLIP model is easy to implement and beneficial.
 
+## Example of these two discoveries:
+
 ![11737UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/e6d763b9-548b-4b3e-b992-e9e37fc91c6d)
 
+
+## CLIP Temperature with SD 1.5:
+
+### 0.77 
+
+![077](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/c0ca8f89-096d-4edb-8b2a-b0958f51e5ac)
+
+### 0.88
+
+![088](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/1b9cf7b0-e0f7-4bc5-a329-3cdf5b2a91ca)
+
+### 1.00 
+
+![100](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/5d00d833-406e-4bad-bf07-a6bbd281ea20)
+
+### 1.25 
+
+![125](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/acc29a43-322a-42f1-b9cc-a07b8e1c366d)
+
+### 1.42
+
+![142](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/60f2622e-6a99-434a-b887-d531b71370e7)
+
+
+## SDXL Unet temperature variation
+
 https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/4cbdc670-5e6c-435c-9f39-66f910dfed13
-
-
 
 
 # In short:
