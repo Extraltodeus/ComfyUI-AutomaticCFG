@@ -1,17 +1,25 @@
 import torch
 from torch import nn, einsum
 from einops import rearrange, repeat
+import torch.nn.functional as F
+import math
+from comfy import model_management
+import types
 
 def exists(val):
     return val is not None
 
-# taken from comfy.ldm.modules
+
 class temperature_patcher():
     def __init__(self, temperature):
         self.temperature = temperature
     
+    # taken from comfy.ldm.modules
     def attention_basic_with_temperature(self, q, k, v, extra_options, mask=None, attn_precision=None):
-        heads = extra_options['n_heads']
+        if isinstance(extra_options, int):
+            heads = extra_options
+        else:
+            heads = extra_options['n_heads']
 
         b, _, dim_head = q.shape
         dim_head //= heads
@@ -78,27 +86,76 @@ class ExperimentalTemperaturePatch:
     def INPUT_TYPES(s):
         required_inputs = {f"{key}_{layer}": ("BOOLEAN", {"default": False}) for key, layers in s.TOGGLES.items() for layer in layers}
         required_inputs["model"] = ("MODEL",)
-        required_inputs["Temperature"] = ("FLOAT", {"default": 1.0, "min": 0.01, "max": 10.0, "step": 0.01, "round": 0.01})
-        required_inputs["Attention"]   = (["both","self","cross"],)
+        required_inputs["Temperature"]  = ("FLOAT", {"default": 1.0, "min": 0.01, "max": 10.0, "step": 0.01, "round": 0.01})
+        required_inputs["Attention"]    = (["both","self","cross"],)
         return {"required": required_inputs}
     
     TOGGLES = {}
-    RETURN_TYPES = ("MODEL",)
-    RETURN_NAMES = ("Model",)
+    RETURN_TYPES = ("MODEL","STRING",)
+    RETURN_NAMES = ("Model","String",)
     FUNCTION = "patch"
 
     CATEGORY = "model_patches/Automatic_CFG"
 
     def patch(self, model, Temperature, Attention, **kwargs):
         m = model.clone()
+        levels = ["input","middle","output"]
+        parameters_output = {level:[] for level in levels}
         for key, toggle_enabled in kwargs.items():
-            if key.split("_")[0] in ["input","middle","output"] and toggle_enabled:
+            current_level = key.split("_")[0]
+            if current_level in levels and toggle_enabled:
+                b_number = int(key.split("_")[1])
+                parameters_output[current_level].append(b_number)
                 patcher = temperature_patcher(Temperature)
+
                 if Attention in ["both","self"]:
-                    m.set_model_attn1_replace(patcher.attention_basic_with_temperature, key.split("_")[0], int(key.split("_")[1]))
+                    m.set_model_attn1_replace(patcher.attention_basic_with_temperature, current_level, b_number)
                 if Attention in ["both","cross"]:
-                    m.set_model_attn2_replace(patcher.attention_basic_with_temperature, key.split("_")[0], int(key.split("_")[1]))
-        return (m, )
+                    m.set_model_attn2_replace(patcher.attention_basic_with_temperature, current_level, b_number)
+
+        parameters_as_string = "\n".join(f"{k}: {','.join(map(str, v))}" for k, v in parameters_output.items())
+        parameters_as_string = f"Temperature: {Temperature}\n{parameters_as_string}\nAttention: {Attention}"
+        return (m, parameters_as_string,)
     
 ExperimentalTemperaturePatchSDXL = type("ExperimentalTemperaturePatch_SDXL", (ExperimentalTemperaturePatch,), {"TOGGLES": layers_SDXL})
 ExperimentalTemperaturePatchSD15 = type("ExperimentalTemperaturePatch_SD15", (ExperimentalTemperaturePatch,), {"TOGGLES": layers_SD15})
+
+class CLIPTemperaturePatch:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {"required": { "clip": ("CLIP",),
+                              "Temperature": ("FLOAT", {"default": 1.0, "min": 0.0, "max": 10.0, "step": 0.01}),
+                              }}
+    
+    RETURN_TYPES = ("CLIP",)
+    FUNCTION = "merge"
+    CATEGORY = "model_patches/Automatic_CFG"
+    
+    def patch(self, clip, Temperature):
+        def custom_optimized_attention(device, mask=None, small_input=True):
+            return temperature_patcher(Temperature).attention_basic_with_temperature
+        
+        def new_forward(self, x, mask=None, intermediate_output=None):
+            optimized_attention = custom_optimized_attention(x.device, mask=mask is not None, small_input=True)
+
+            if intermediate_output is not None:
+                if intermediate_output < 0:
+                    intermediate_output = len(self.layers) + intermediate_output
+
+            intermediate = None
+            for i, l in enumerate(self.layers):
+                x = l(x, mask, optimized_attention)
+                if i == intermediate_output:
+                    intermediate = x.clone()
+            return x, intermediate
+
+        m = clip.clone()
+
+        clip_encoder_instance = m.cond_stage_model.clip_l.transformer.text_model.encoder
+        clip_encoder_instance.forward = types.MethodType(new_forward, clip_encoder_instance)
+        
+        if getattr(m.cond_stage_model, f"clip_g", None) is not None:
+            clip_encoder_instance_g = m.cond_stage_model.clip_g.transformer.text_model.encoder
+            clip_encoder_instance_g.forward = types.MethodType(new_forward, clip_encoder_instance_g)
+        
+        return (m,)

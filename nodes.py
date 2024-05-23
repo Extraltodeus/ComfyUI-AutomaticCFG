@@ -4,6 +4,7 @@ from torch.nn import Upsample
 import comfy.model_management as model_management
 from comfy.model_patcher import set_model_options_patch_replace
 from comfy.ldm.modules.attention import attention_basic, attention_xformers, attention_pytorch, attention_split, attention_sub_quad, optimized_attention_for_device
+from .experimental_temperature import temperature_patcher
 import comfy.samplers
 import comfy.utils
 import numpy as np
