@@ -5,7 +5,10 @@
    - They are standalone and compatible with my other nodes. It is better to connect them before any other auto-cfg node.
    - Here is how you can plug them: ![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/0d01d55f-a2ff-4926-bed8-1f790463b4cf)
    - If you want to set different values for different layers and different attentions you can simply chain them.
-   - Added also a CLIP temperature patch. It patches the CLIP model within the memory object and therefore stays until reload of the CLIP model. Unplugging doesn't work.
+   - Added also a CLIP temperature patch.
+   - ![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/8c8c930e-8079-41f5-9996-14779ef1f7dd)
+   - THE CLIP PATCH IGNORES THE CONNECTION and is linked to the model in memory. Set the temperature at 1 to set it to normal or use a second loader / reload the model.
+
 
 
 https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/4cbdc670-5e6c-435c-9f39-66f910dfed13
