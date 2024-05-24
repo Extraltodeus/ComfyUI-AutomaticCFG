@@ -8,8 +8,9 @@ import types
 import os
 
 def exists(val):
-    return val is not None       
+    return val is not None
 
+# better than a division by 0 hey
 abs_mean = lambda x: torch.where(torch.isnan(x) | torch.isinf(x), torch.zeros_like(x), x).abs().mean()
 
 class temperature_patcher():
