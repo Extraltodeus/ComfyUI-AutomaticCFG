@@ -1,4 +1,4 @@
-# Upcoming update (so not yet but soon and the date is when I wrote this TED talk uh) (28.05.24):
+# Upcoming update (so not yet but soon and the date is when I wrote this monologue lol) (28.05.24):
 
 - It's a preview, I'm scratching my head on this right now but will definitely put the temperature nodes in their own repository after figuring out (or at least finding an acceptable approximation) what's is the best relation in between... the scale of the image and the temperature!
 - WOULD YOU LOOK AT THAT! This is BASE SD 1.5 sampling natively at 512*1024!
