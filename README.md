@@ -1,4 +1,15 @@
-# Latest update (22.05.24):
+# Upcoming update (so not yet but soon and the date is when I wrote this TED talk uh) (28.05.24):
+
+- It's a preview, I'm scratching my head on this right now but will definitely put the temperature nodes in their own repository after figuring out (or at least finding an acceptable approximation) what's is the best relation in between... the scale of the image and the temperature!
+- WOULD YOU LOOK AT THAT! This is BASE SD 1.5 sampling natively at 512*1024!
+-
+- ![combined_pair_1](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/50b2ac43-5087-4464-90f4-9aae27f476b7)![combined_pair_3](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/2de60d28-db11-4bba-b3b3-b5dd97f564f1)
+![combined_pair_2](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/3def57a8-c000-4148-a9d5-a92c0a70b388)
+- You can also sample the tiniest images, isn't it a cute little bottle?    ![00272UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/91ef2887-19a0-411d-8bdf-61cbbba5e35e)
+- This update is not available yet but soon enough! :D
+
+
+# Update (22.05.24):
 
 -   T E M P E R A T U R E   S E T T I N G S  for the CLIP and the UNET!
    - Added two experimental temperature settings nodes for SD 1.5 and SDXL # Quick edit on the 28.05.24, I've made interesting discoveries with this and will probably remove these nodes to put them into a different repository.
