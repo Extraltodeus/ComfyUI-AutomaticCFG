@@ -1,7 +1,7 @@
 # Upcoming update (so not yet but soon and the date is when I wrote this monologue lol) (28.05.24):
 
 - It's a preview, I'm scratching my head on this right now but will definitely put the temperature nodes in their own repository after figuring out (or at least finding an acceptable approximation) what's is the best relation in between... the scale of the image and the temperature!
-- WOULD YOU LOOK AT THAT! This is BASE SD 1.5 sampling natively at 512*1024!
+- [WOULD YOU LOOK AT THAT!](https://youtu.be/jSCxzsS6Vu0?si=p8mHn7vuxiY6lbG2&t=14) This is BASE SD 1.5 sampling natively at 512*1024!
 -
 - ![combined_pair_1](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/50b2ac43-5087-4464-90f4-9aae27f476b7)![combined_pair_3](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/2de60d28-db11-4bba-b3b3-b5dd97f564f1)
 ![combined_pair_2](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/3def57a8-c000-4148-a9d5-a92c0a70b388)
