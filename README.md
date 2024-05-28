@@ -16,7 +16,6 @@ Now includes custom attention modifiers and interesting presets as well as tempe
 - ![combined_pair_1](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/50b2ac43-5087-4464-90f4-9aae27f476b7)![combined_pair_3](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/2de60d28-db11-4bba-b3b3-b5dd97f564f1)
 ![combined_pair_2](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/3def57a8-c000-4148-a9d5-a92c0a70b388)
 - You can also sample the tiniest images, isn't it a cute little bottle?    ![00272UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/91ef2887-19a0-411d-8bdf-61cbbba5e35e)
-- This update is not available yet but soon enough! :D
 
 
 # Update (22.05.24):
