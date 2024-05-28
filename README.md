@@ -1,3 +1,13 @@
+# In short:
+
+My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much but it's honest work.
+
+No more burns and 160% faster gens with the warp drive node.
+
+Now includes custom attention modifiers and interesting presets as well as temperature scaling.
+
+
+
 # Upcoming update (so not yet but soon and the date is when I wrote this monologue lol) (28.05.24):
 
 - It's a preview, I'm scratching my head on this right now but will definitely put the temperature nodes in their own repository after figuring out (or at least finding an acceptable approximation) what's is the best relation in between... the scale of the image and the temperature!
@@ -54,15 +64,6 @@
 ## SDXL Unet temperature variation (interpolated with Flowframes)
 
 https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/4cbdc670-5e6c-435c-9f39-66f910dfed13
-
-
-# In short:
-
-My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much but it's honest work.
-
-No more burns and 160% faster gens with the warp drive node.
-
-Now includes custom attention modifiers and interesting presets as well as temperature scaling.
 
 
 # Usage:
