@@ -7,6 +7,12 @@ No more burns and 160% faster gens with the warp drive node.
 Now includes custom attention modifiers and interesting presets as well as temperature scaling.
 
 
+# Update:
+
+- Removed temperature nodes and set a [repository](https://github.com/Extraltodeus/Stable-Diffusion-temperature-settings) for these
+
+- I let the old .py file and simply comment out the nodes if you want to re-enable them but highly recommand to use the new version, as it is much more memory-efficient (using pytorch attention)
+
 # Usage:
 
 ![77889aa6-a2f6-48bf-8cde-17c9cbfda5fa](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/c725a06c-8966-43de-ab1c-569e2ff5b151)
