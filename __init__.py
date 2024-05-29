@@ -14,10 +14,10 @@ NODE_CLASS_MAPPINGS = {
     "Automatic CFG - Attention modifiers": attentionModifierParametersNode,
     "Automatic CFG - Attention modifiers tester": attentionModifierBruteforceParametersNode,
     "Automatic CFG - Unpatch function": simpleDynamicCFGunpatch,
-    "Temperature settings SDXL": ExperimentalTemperaturePatchSDXL,
-    "Temperature settings SD 1.5": ExperimentalTemperaturePatchSD15,
-    "Temperature settings CLIP": CLIPTemperaturePatch,
-    "Temperature separate settings CLIP SDXL": CLIPTemperaturePatchDual,
+    # "Temperature settings SDXL": ExperimentalTemperaturePatchSDXL,
+    # "Temperature settings SD 1.5": ExperimentalTemperaturePatchSD15,
+    # "Temperature settings CLIP": CLIPTemperaturePatch,
+    # "Temperature separate settings CLIP SDXL": CLIPTemperaturePatchDual,
     # "SAG delayed activation": SelfAttentionGuidanceCustom,
 }
 
