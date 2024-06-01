@@ -6,6 +6,7 @@ No more burns and 160% faster gens with the warp drive node.
 
 Now includes custom attention modifiers and interesting presets as well as temperature scaling.
 
+Also just tested and it works with pixart sigma.
 
 # Update:
 
