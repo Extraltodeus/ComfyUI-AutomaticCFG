@@ -132,17 +132,6 @@ Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.
      - Experiment what each layer really do by using what is basically a bruteforcing node! (the Attention modifiers tester node)
      - This is how you do a [Perturbed Attention Guidance](https://github.com/Extraltodeus/temp/blob/main/PAG.png) for example
 
-# Upcoming update (so not yet but soon) (28.05.24):
-
-- It's a preview, I'm scratching my head on this right now but will definitely put the temperature nodes in their own repository after figuring out (or at least finding an acceptable approximation) what's is the best relation in between... the scale of the image and the temperature!
-- Next update will require pytorch 2.3, now works fully with ComfyUI (2-3 weeks ago it gave me errors, now it works for sure)
-- [WOULD YOU LOOK AT THAT!](https://youtu.be/jSCxzsS6Vu0?si=p8mHn7vuxiY6lbG2&t=14) This is BASE SD 1.5 sampling natively at 512*1024!
--
-- ![combined_pair_1](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/50b2ac43-5087-4464-90f4-9aae27f476b7)![combined_pair_3](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/2de60d28-db11-4bba-b3b3-b5dd97f564f1)
-![combined_pair_2](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/3def57a8-c000-4148-a9d5-a92c0a70b388)
-- You can also sample the tiniest images, isn't it a cute little bottle?    ![00272UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/91ef2887-19a0-411d-8bdf-61cbbba5e35e)
-
-
 # Update (22.05.24):
 
 -   T E M P E R A T U R E   S E T T I N G S  for the CLIP and the UNET!
