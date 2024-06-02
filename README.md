@@ -132,32 +132,7 @@ Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.
      - Experiment what each layer really do by using what is basically a bruteforcing node! (the Attention modifiers tester node)
      - This is how you do a [Perturbed Attention Guidance](https://github.com/Extraltodeus/temp/blob/main/PAG.png) for example
 
-# Update (22.05.24):
 
--   T E M P E R A T U R E   S E T T I N G S  for the CLIP and the UNET!
-   - Added two experimental temperature settings nodes for SD 1.5 and SDXL # Quick edit on the 28.05.24, I've made interesting discoveries with this and will probably remove these nodes to put them into a different repository.
-   - They are standalone and compatible with my other nodes. It is better to connect them before any other auto-cfg node.
-   - Here is how you can plug them: ![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/0d01d55f-a2ff-4926-bed8-1f790463b4cf)
-   - If you want to set different values for different layers and different attentions you can simply chain them.
-   - Added also a CLIP temperature patch.
-   - ![image](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/8c8c930e-8079-41f5-9996-14779ef1f7dd)
-   - THE CLIP PATCH IGNORES THE CONNECTION and is linked to the model in memory. Set the temperature at 1 to set it to normal or use a second loader / reload the model.
-   - Interesting overall discoveries:
-        - At least with SDXL, bypassing the input layer 8 while generating the uncond makes the images cleaner. Make it return the query rather than the result of the attention function and the uncond stops messing around with the composition. It does however raises the brightness if an anti-burn is not used (but you're in luck since that was the initial goal of this repository). This side effect is absolutely unnoticeable with the auto-cfg set on "hard".
-   - Scaling the attention scores with a temperature on the CLIP model is easy to implement and beneficial.
-
-
-<div align="center">
-    
-### 😊 [Gallery of generated images and workflows with this latest update HERE!](https://www.patreon.com/posts/104245818) 😊
-
-</div>
-
-![12steps](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/b805b94a-a979-42f6-9114-6fc1cb30b63b)
-
-![01100UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/00d2f625-f617-496b-98d3-a57ecbc1c478)
-
-<sub>12 steps in one shot / 4.2 seconds per image / using the "Excellent_attention" patch.</sub>
 
 # Examples
 
