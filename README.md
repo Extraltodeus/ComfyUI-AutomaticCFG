@@ -8,6 +8,10 @@ Now includes custom attention modifiers and interesting presets as well as tempe
 
 Also just tested and it works with pixart sigma.
 
+# Note:
+
+The presets are interpreted with eval(). Make sure that you thrust whoever sent a preset to you as it may be used to execute malicious code.
+
 # Update:
 
 - Removed temperature nodes and set a [repository](https://github.com/Extraltodeus/Stable-Diffusion-temperature-settings) for these
