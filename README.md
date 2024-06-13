@@ -8,7 +8,7 @@ Now includes custom attention modifiers and interesting presets as well as tempe
 
 Also just tested and it works with pixart sigma.
 
-Works with SD3 for as long as you don't use any boost feature / cutting the uncond (it's the same thing)
+Works with SD3 for as long as you don't use any boost feature / cutting the uncond (it's the same thing). 20 steps works nicely.
 
 # Note:
 
