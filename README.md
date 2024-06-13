@@ -8,6 +8,8 @@ Now includes custom attention modifiers and interesting presets as well as tempe
 
 Also just tested and it works with pixart sigma.
 
+Works with SD3 for as long as you don't use any boost feature / cutting the uncond (it's the same thing)
+
 # Note:
 
 The presets are interpreted with eval(). Make sure that you thrust whoever sent a preset to you as it may be used to execute malicious code.
