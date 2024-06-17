@@ -1258,3 +1258,29 @@ class attentionModifierSingleLayerTemperatureNode:
             out_modifiers = [attn_modifier_dict]
 
         return (out_modifiers if join_parameters is None else join_parameters + out_modifiers, info_string, )
+
+class uncondZeroNode:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {
+                                "model": ("MODEL",),
+                                "scale": ("FLOAT", {"default": 1.2, "min": 0.0, "max": 10.0, "step": 0.01, "round": 0.01}),
+                              }}
+    RETURN_TYPES = ("MODEL",)
+    FUNCTION = "patch"
+
+    CATEGORY = "model_patches/Automatic_CFG"
+
+    def patch(self, model, scale):
+        def custom_patch(args):
+            cond_pred = args["cond_denoised"]
+            input_x = args["input"]
+            if args["sigma"][0] <= 1:
+                return input_x - cond_pred
+            cond   = input_x - cond_pred
+            uncond = input_x - torch.zeros_like(cond)
+            return uncond + scale * (cond - uncond)
+
+        m = model.clone()
+        m.set_model_sampler_cfg_function(custom_patch)
+        return (m, )
