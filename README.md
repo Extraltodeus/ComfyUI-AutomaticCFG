@@ -16,7 +16,7 @@ The presets are interpreted with eval(). Make sure that you thrust whoever sent 
 
 # Update:
 
-- Added "Uncond Zero" node: Incompatible with the other nodes. Set your CFG scale at 1 and use an SDE sampler. Basically showing that these samplers do not need any uncond.
+- Removed and perfected "Uncond Zero" node and moved it to it's [own repository](https://github.com/Extraltodeus/Uncond-Zero-for-ComfyUI/tree/main)
 - Removed temperature nodes and set a [repository](https://github.com/Extraltodeus/Stable-Diffusion-temperature-settings) for these
 
 # Usage:
