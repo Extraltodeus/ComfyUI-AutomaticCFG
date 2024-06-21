@@ -575,7 +575,7 @@ class advancedDynamicCFG:
               disable_cond=False, disable_cond_sigma_start=1000,disable_cond_sigma_end=1000, save_as_preset = False, preset_name = "", **kwargs
               ):
         
-        support_function()
+        # support_function()
         model_options_copy = deepcopy(model.model_options)
         monkey_patching_comfy_sampling_function()
         if args_filter != "":
