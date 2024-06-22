@@ -10,6 +10,6 @@ Repository = "https://github.com/Extraltodeus/ComfyUI-AutomaticCFG"
 #  Used by Comfy Registry https://comfyregistry.org
 
 [tool.comfy]
-PublisherId = ""
+PublisherId = "extraltodeus"
 DisplayName = "ComfyUI-AutomaticCFG"
 Icon = ""
