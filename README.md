@@ -16,7 +16,7 @@ The presets are interpreted with eval(). Make sure that you thrust whoever sent 
 
 # Update:
 
-- Commented out the too-many-line-return Patreon message. Also I want to apologize to who requested it as I got unnecessarily agressive. This is not my usual behavior.
+- Commented out the too-many-line-return Patreon message. Also I want to apologize to who requested it as I got unnecessarily agressive.
 - Removed and perfected "Uncond Zero" node and moved it to it's [own repository](https://github.com/Extraltodeus/Uncond-Zero-for-ComfyUI/tree/main)
 - Removed temperature nodes and set a [repository](https://github.com/Extraltodeus/Stable-Diffusion-temperature-settings) for these
 
