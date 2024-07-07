@@ -1,5 +1,5 @@
 from .nodes import *
-from .experimental_temperature import ExperimentalTemperaturePatchSDXL,ExperimentalTemperaturePatchSD15,CLIPTemperaturePatch,CLIPTemperaturePatchDual
+# from .experimental_temperature import ExperimentalTemperaturePatchSDXL,ExperimentalTemperaturePatchSD15,CLIPTemperaturePatch,CLIPTemperaturePatchDual
 # from .nodes_sag_custom import * 
 
 NODE_CLASS_MAPPINGS = {
