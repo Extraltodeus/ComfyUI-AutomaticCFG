@@ -157,6 +157,14 @@ Sample and Distribution Quality in Diffusion Models](https://arxiv.org/pdf/2404.
 ![03604UI_00001_](https://github.com/Extraltodeus/ComfyUI-AutomaticCFG/assets/15731540/ca391b46-f587-43da-98da-a87e4982e4ed)
 
 
+
+# Pro tip:
+
+Did you know that my first activity is to write creative model merging functions?
+
+While the code is too much of a mess to be shared, I do expose and share my models. You can find them in this [gallery](https://github.com/Extraltodeus/shared_models_galleries)! 😁
+
+
 -----
 
 Thanks to ComfyUI for existing and making such things so simple!
