@@ -1,5 +1,7 @@
 # Abandon this boat and jump on [this one!](https://github.com/Extraltodeus/Skimmed_CFG)
 
+If you liked other functionnalities, I've re-created most in [this](https://github.com/Extraltodeus/pre_cfg_comfy_nodes_for_ComfyUI) repository.
+
 # In short:
 
 My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much but it's honest work.
