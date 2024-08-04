@@ -1,3 +1,5 @@
+# Abandon this boat and jump on [this one!](https://github.com/Extraltodeus/Skimmed_CFG)
+
 # In short:
 
 My own version "from scratch" of a self-rescaling CFG / anti-burn. It ain't much but it's honest work.
