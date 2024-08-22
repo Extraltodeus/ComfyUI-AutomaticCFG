@@ -37,8 +37,8 @@ def sampling_function_patched(model, x, timestep, uncond, cond, cond_scale, mode
         args = {"model": model, "sigma": timestep, "model_options": model_options}
         model, model_options = fn(args)
 
-    if "sampler_pre_cfg_function" in model_options:
-        uncond, cond, cond_scale = model_options["sampler_pre_cfg_function"](
+    if "sampler_pre_cfg_automatic_cfg_function" in model_options:
+        uncond, cond, cond_scale = model_options["sampler_pre_cfg_automatic_cfg_function"](
             sigma=timestep, uncond=uncond, cond=cond, cond_scale=cond_scale
         )
         
@@ -50,6 +50,12 @@ def sampling_function_patched(model, x, timestep, uncond, cond, cond_scale, mode
     conds = [cond, uncond_]
 
     out = comfy.samplers.calc_cond_batch(model, conds, x, timestep, model_options)
+
+    for fn in model_options.get("sampler_pre_cfg_function", []):
+        args = {"conds":conds, "conds_out": out, "cond_scale": cond_scale, "timestep": timestep,
+                "input": x, "sigma": timestep, "model": model, "model_options": model_options}
+        out  = fn(args)
+
     cond_pred = out[0]
     uncond_pred = out[1]
 
@@ -78,14 +84,14 @@ def monkey_patching_comfy_sampling_function():
     comfy.samplers.sampling_function = sampling_function_patched
     comfy.samplers.sampling_function._automatic_cfg_decorated = True # flag to check monkey patch
 
-def make_sampler_pre_cfg_function(minimum_sigma_to_disable_uncond=0, maximum_sigma_to_enable_uncond=1000000, disabled_cond_start=10000,disabled_cond_end=10000):
-    def sampler_pre_cfg_function(sigma, uncond, cond, cond_scale, **kwargs):
+def make_sampler_pre_cfg_automatic_cfg_function(minimum_sigma_to_disable_uncond=0, maximum_sigma_to_enable_uncond=1000000, disabled_cond_start=10000,disabled_cond_end=10000):
+    def sampler_pre_cfg_automatic_cfg_function(sigma, uncond, cond, cond_scale, **kwargs):
         if sigma[0] < minimum_sigma_to_disable_uncond or sigma[0] > maximum_sigma_to_enable_uncond:
             uncond = None
         if sigma[0] <= disabled_cond_start and sigma[0] > disabled_cond_end:
             cond = None
         return uncond, cond, cond_scale
-    return sampler_pre_cfg_function
+    return sampler_pre_cfg_automatic_cfg_function
 
 def get_entropy(tensor):
     hist = np.histogram(tensor.cpu(), bins=100)[0]
@@ -604,12 +610,12 @@ class advancedDynamicCFG:
         m = model.clone()
 
         if skip_uncond or disable_cond:
-            # set model_options sampler_pre_cfg_function
-            m.model_options["sampler_pre_cfg_function"] = make_sampler_pre_cfg_function(uncond_sigma_end if skip_uncond else 0, uncond_sigma_start if skip_uncond else 100000,\
+            # set model_options sampler_pre_cfg_automatic_cfg_function
+            m.model_options["sampler_pre_cfg_automatic_cfg_function"] = make_sampler_pre_cfg_automatic_cfg_function(uncond_sigma_end if skip_uncond else 0, uncond_sigma_start if skip_uncond else 100000,\
                                                                                         disable_cond_sigma_start if disable_cond else 100000, disable_cond_sigma_end if disable_cond else 100000)
             print(f"Sampling function patched. Uncond enabled from {round(uncond_sigma_start,2)} to {round(uncond_sigma_end,2)}")
         elif not ignore_pre_cfg_func:
-            m.model_options.pop("sampler_pre_cfg_function", None)
+            m.model_options.pop("sampler_pre_cfg_automatic_cfg_function", None)
             uncond_sigma_start, uncond_sigma_end = 1000000, 0
 
         top_k = auto_cfg_topk
@@ -994,7 +1000,7 @@ class simpleDynamicCFGunpatch:
 
     def unpatch(self, model):
         m = model.clone()
-        m.model_options.pop("sampler_pre_cfg_function", None)
+        m.model_options.pop("sampler_pre_cfg_automatic_cfg_function", None)
         return (m, )
 
 class simpleDynamicCFGExcellentattentionPatch:
