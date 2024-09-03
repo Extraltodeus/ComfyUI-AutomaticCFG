@@ -18,7 +18,7 @@
 
 ![12 steps SDXL](./12%20steps%20SDXL%20AYS%20Warp%20drive%20workflow.png)
 
-## I don't know what this one is
+## Excellent attention preset / node
 
 ![shruggie](./11728UI_00001_.png)
 
@@ -26,7 +26,7 @@
 
 ![attention modifiers explanations](./attention_modifiers_explainations.png)
 
-## Dat Random Gurl
+## partially disabled input layer 8 to enhance random composition
 
 ![dat random gurl](./dat_random_gurl.png)
 
