@@ -724,10 +724,10 @@ class attentionModifierParametersNode:
         return {"required": {
                                 "sigma_start": ("FLOAT", {"default": 1000, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
                                 "sigma_end":   ("FLOAT", {"default":  0, "min": 0.0, "max": 10000.0, "step": 0.1, "round": 0.01}),
-                                "self_attn_mod_eval":   ("STRING", {"multiline": True }, {"default": ""}),
-                                "unet_block_id_input":  ("STRING", {"multiline": False}, {"default": ""}),
-                                "unet_block_id_middle": ("STRING", {"multiline": False}, {"default": ""}),
-                                "unet_block_id_output": ("STRING", {"multiline": False}, {"default": ""}),
+                                "self_attn_mod_eval":   ("STRING", {"multiline": True,  "default": ""}),
+                                "unet_block_id_input":  ("STRING", {"multiline": False, "default": ""}),
+                                "unet_block_id_middle": ("STRING", {"multiline": False, "default": ""}),
+                                "unet_block_id_output": ("STRING", {"multiline": False, "default": ""}),
                                 "unet_attn": (["attn1","attn2","both"],),
                               },
                               "optional":{
